@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /Users/borchim/Downloads/codecanyon-3FohzjJo-vcard-saas-digital-business-card-builder-bio-links-builder/main-file remote -v)"
+    ]
+  }
+}

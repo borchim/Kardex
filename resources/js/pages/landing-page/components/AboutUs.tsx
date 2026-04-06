@@ -142,7 +142,7 @@ export default function AboutUs({ settings, sectionData, brandColor = '#3b82f6' 
         {sectionData.story_title || t('Empowering Professional Connections Since 2020')}
       </h3>
       <div className="text-gray-600 mb-8 leading-relaxed" dangerouslySetInnerHTML={{
-        __html: (sectionData.story_content || t('Founded by a team of networking enthusiasts and technology experts, vCard SaaS was born from the frustration of outdated paper business cards and the need for a more sustainable, efficient solution. Today, we serve over 10,000 professionals across 50+ countries, helping them build stronger business relationships through innovative digital solutions.')).replace(/\n/g, '</p><p class="mb-6">')
+        __html: (sectionData.story_content || t('Founded by a team of networking enthusiasts and technology experts, Kardex was born from the frustration of outdated paper business cards and the need for a more sustainable, efficient solution. Today, we serve over 10,000 professionals across 50+ countries, helping them build stronger business relationships through innovative digital solutions.')).replace(/\n/g, '</p><p class="mb-6">')
       }} />
       {stats.length > 0 && (
         <div className={`flex items-center gap-8 ${centered ? 'justify-center' : ''}`}>
@@ -176,7 +176,7 @@ export default function AboutUs({ settings, sectionData, brandColor = '#3b82f6' 
                   {sectionData.story_title || t('Empowering Professional Connections Since 2020')}
                 </h3>
                 <div className="mb-6 leading-relaxed opacity-90" dangerouslySetInnerHTML={{
-                  __html: (sectionData.story_content || t('Founded by a team of networking enthusiasts and technology experts, vCard SaaS was born from the frustration of outdated paper business cards and the need for a more sustainable, efficient solution. Today, we serve over 10,000 professionals across 50+ countries, helping them build stronger business relationships through innovative digital solutions.')).replace(/\n/g, '</p><p class="mb-4">')
+                  __html: (sectionData.story_content || t('Founded by a team of networking enthusiasts and technology experts, Kardex was born from the frustration of outdated paper business cards and the need for a more sustainable, efficient solution. Today, we serve over 10,000 professionals across 50+ countries, helping them build stronger business relationships through innovative digital solutions.')).replace(/\n/g, '</p><p class="mb-4">')
                 }} />
                 {stats.length > 0 && (
                   <div className="flex items-center justify-center gap-8">

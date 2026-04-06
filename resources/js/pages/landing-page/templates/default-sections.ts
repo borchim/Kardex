@@ -60,12 +60,12 @@ export const defaultLandingPageSections = {
     },
     {
       key: 'screenshots',
-      title: 'See vCard SaaS in Action',
+      title: 'See Kardex in Action',
       subtitle: 'Explore our intuitive interface and powerful features designed to streamline your digital networking experience.',
       screenshots_list: [
         {
           src: '/screenshots/hero.png',
-          alt: 'vCard SaaS Dashboard Overview',
+          alt: 'Kardex Dashboard Overview',
           title: 'Dashboard Overview',
           description: 'Comprehensive dashboard with all your digital cards and analytics'
         },
@@ -79,7 +79,7 @@ export const defaultLandingPageSections = {
     },
     {
       key: 'why_choose_us',
-      title: 'Why Choose vCard SaaS?',
+      title: 'Why Choose Kardex?',
       subtitle: 'We\'re not just another digital business card platform.',
       reasons: [
         { title: 'Quick Setup', description: 'Create your digital business card in under 5 minutes.', icon: 'clock' },
@@ -116,10 +116,10 @@ export const defaultLandingPageSections = {
     },
     {
       key: 'about',
-      title: 'About vCard SaaS',
+      title: 'About Kardex',
       description: 'We are passionate about transforming how professionals connect.',
       story_title: 'Empowering Professional Connections Since 2020',
-      story_content: 'Founded by a team of networking enthusiasts and technology experts, vCard SaaS was born from the frustration of outdated paper business cards.',
+      story_content: 'Founded by a team of networking enthusiasts and technology experts, Kardex was born from the frustration of outdated paper business cards.',
       image: '',
       background_color: '#f9fafb',
       layout: 'image-right',
@@ -137,7 +137,7 @@ export const defaultLandingPageSections = {
       cta_description: 'We\'re always looking for talented individuals.',
       cta_button_text: 'View Open Positions',
       members: [
-        { name: 'Sarah Johnson', role: 'CEO & Founder', bio: 'Former tech executive with 15+ years experience.', image: '', linkedin: '#', email: 'sarah@vCard SaaS.com' }
+        { name: 'Sarah Johnson', role: 'CEO & Founder', bio: 'Former tech executive with 15+ years experience.', image: '', linkedin: '#', email: 'sarah@Kardex.com' }
       ]
     },
     {
@@ -150,7 +150,7 @@ export const defaultLandingPageSections = {
         { value: '10K+', label: 'Happy Users', color: 'green' }
       ],
       testimonials: [
-        { name: 'Alex Thompson', role: 'Sales Director', company: 'TechCorp Inc.', content: 'vCard SaaS has revolutionized how I network.', rating: 5 }
+        { name: 'Alex Thompson', role: 'Sales Director', company: 'TechCorp Inc.', content: 'Kardex has revolutionized how I network.', rating: 5 }
       ]
     },
     {
@@ -174,12 +174,12 @@ export const defaultLandingPageSections = {
       cta_text: 'Still have questions?',
       button_text: 'Contact Support',
       faqs: [
-        { question: 'How does vCard SaaS work?', answer: 'vCard SaaS allows you to create digital business cards that can be shared via QR codes.' }
+        { question: 'How does Kardex work?', answer: 'Kardex allows you to create digital business cards that can be shared via QR codes.' }
       ]
     },
     {
       key: 'newsletter',
-      title: 'Stay Updated with vCard SaaS',
+      title: 'Stay Updated with Kardex',
       subtitle: 'Get the latest updates and networking tips.',
       privacy_text: 'No spam, unsubscribe at any time.',
       benefits: [
@@ -189,7 +189,7 @@ export const defaultLandingPageSections = {
     {
       key: 'contact',
       title: 'Get in Touch',
-      subtitle: 'Have questions about vCard SaaS? We\'d love to hear from you.',
+      subtitle: 'Have questions about Kardex? We\'d love to hear from you.',
       form_title: 'Send us a Message',
       info_title: 'Contact Information',
       info_description: 'We\'re here to help and answer any question you might have.',
@@ -258,7 +258,7 @@ export const defaultLandingPageSections = {
         latitude: 37.7749,
         longitude: -122.4194,
         zoom_level: 15,
-        marker_title: 'vCard SaaS Office'
+        marker_title: 'Kardex Office'
       },
       sections: [
         {
@@ -317,7 +317,7 @@ export const defaultLandingPageSections = {
     favicon: ''
   },
   seo: {
-    meta_title: 'vCard SaaS - Digital Business Cards',
+    meta_title: 'Kardex - Digital Business Cards',
     meta_description: 'Create professional digital business cards in minutes.',
     meta_keywords: 'digital business cards, networking, QR codes, NFC'
   },

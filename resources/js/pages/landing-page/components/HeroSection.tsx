@@ -91,7 +91,7 @@ export default function HeroSection({ settings, sectionData, brandColor = '#3b82
             e.currentTarget.style.backgroundColor = brandColor;
             e.currentTarget.style.color = 'white';
           }}
-          aria-label={isRegistrationEnabled ? "Start free trial - Register for vCard SaaS" : "Login to vCard SaaS"}
+          aria-label={isRegistrationEnabled ? "Start free trial - Register for Kardex" : "Login to Kardex"}
         >
           {sectionData.primary_button_text || t('Start Free Trial')}
           <ArrowRight size={18} />
@@ -100,7 +100,7 @@ export default function HeroSection({ settings, sectionData, brandColor = '#3b82
           href={route('login')}
           className="border px-8 py-4 rounded-lg transition-colors font-semibold text-base flex items-center justify-center gap-2 hover:bg-white/10"
           style={{ borderColor: brandColor, color: brandColor }}
-          aria-label="Login to existing vCard SaaS account"
+          aria-label="Login to existing Kardex account"
         >
           <Play size={18} />
           {sectionData.secondary_button_text || t('Login')}

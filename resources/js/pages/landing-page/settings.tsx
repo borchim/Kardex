@@ -1047,7 +1047,7 @@ export default function LandingPageSettings() {
                         id="screenshots_title"
                         value={getSectionData('screenshots').title || ''}
                         onChange={(e) => updateSectionData('screenshots', { title: e.target.value })}
-                        placeholder={t("See vCard SaaS in Action")}
+                        placeholder={t("See Kardex in Action")}
                       />
                     </div>
                     
@@ -1136,7 +1136,7 @@ export default function LandingPageSettings() {
                                   newScreenshots[index] = { ...newScreenshots[index], alt: e.target.value };
                                   updateSectionData('screenshots', { screenshots_list: newScreenshots });
                                 }}
-                                placeholder={t("vCard SaaS Dashboard Overview")}
+                                placeholder={t("Kardex Dashboard Overview")}
                               />
                             </div>
                           </div>
@@ -2417,7 +2417,7 @@ export default function LandingPageSettings() {
                                 newFaqs[index] = { ...newFaqs[index], question: e.target.value };
                                 updateSectionData('faq', { faqs: newFaqs });
                               }}
-                              placeholder={t("How does vCard SaaS work?")}
+                              placeholder={t("How does Kardex work?")}
                             />
                           </div>
                           
@@ -2431,7 +2431,7 @@ export default function LandingPageSettings() {
                                 newFaqs[index] = { ...newFaqs[index], answer: e.target.value };
                                 updateSectionData('faq', { faqs: newFaqs });
                               }}
-                              placeholder={t("vCard SaaS allows you to create digital business cards...")}
+                              placeholder={t("Kardex allows you to create digital business cards...")}
                               rows={3}
                             />
                           </div>
@@ -3749,7 +3749,7 @@ export default function LandingPageSettings() {
                     <div className="space-y-3">
                       <Label htmlFor="about_page_content">{t('Story Content')}</Label>
                       <RichTextField
-                        value={getSectionData('about-page').content || '<p>vCard SaaS is a leading digital business card platform that helps businesses create professional online presence. Our mission is to revolutionize how businesses connect and share information in the digital age.</p><p>Founded with the vision of making networking seamless and efficient, we provide cutting-edge solutions for modern businesses. We believe that every connection matters and every interaction should leave a lasting impression.</p>'}
+                        value={getSectionData('about-page').content || '<p>Kardex is a leading digital business card platform that helps businesses create professional online presence. Our mission is to revolutionize how businesses connect and share information in the digital age.</p><p>Founded with the vision of making networking seamless and efficient, we provide cutting-edge solutions for modern businesses. We believe that every connection matters and every interaction should leave a lasting impression.</p>'}
                         onChange={(value) => updateSectionData('about-page', { content: value })}
                         placeholder={t('Write your about us story here...')}
                       />

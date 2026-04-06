@@ -29,7 +29,7 @@ export default function ScreenshotsSection({ brandColor = '#3b82f6', settings, s
   const defaultScreenshots = [
     {
       src: '/screenshots/hero.png',
-      alt: 'vCard SaaS Dashboard Overview',
+      alt: 'Kardex Dashboard Overview',
       title: 'Dashboard Overview',
       description: 'Comprehensive dashboard with all your digital cards and analytics'
     },
@@ -62,7 +62,7 @@ export default function ScreenshotsSection({ brandColor = '#3b82f6', settings, s
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {sectionData?.title || t('See vCard SaaS in Action')}
+            {sectionData?.title || t('See Kardex in Action')}
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed font-medium">
             {sectionData?.subtitle || t('Explore our intuitive interface and powerful features designed to streamline your digital networking experience.')}

@@ -20,7 +20,7 @@ const DEFAULT_TESTIMONIALS = [
     name: 'Alex Thompson',
     role: 'Sales Director',
     company: 'TechCorp Inc.',
-    content: 'vCard SaaS has revolutionized how I network at conferences. The QR code feature is a game-changer!',
+    content: 'Kardex has revolutionized how I network at conferences. The QR code feature is a game-changer!',
     rating: 5
   },
   {

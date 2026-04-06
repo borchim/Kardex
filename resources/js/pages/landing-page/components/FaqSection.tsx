@@ -12,8 +12,8 @@ interface Faq {
 const DEFAULT_FAQS = [
   {
     id: 1,
-    question: 'How does vCard SaaS work?',
-    answer: 'vCard SaaS allows you to create digital business cards that can be shared via QR codes, NFC technology, or direct links. Simply create your card, customize it with your information, and start sharing!'
+    question: 'How does Kardex work?',
+    answer: 'Kardex allows you to create digital business cards that can be shared via QR codes, NFC technology, or direct links. Simply create your card, customize it with your information, and start sharing!'
   },
   {
     id: 2,
@@ -27,8 +27,8 @@ const DEFAULT_FAQS = [
   },
   {
     id: 4,
-    question: 'Do I need technical skills to use vCard SaaS?',
-    answer: 'Not at all! vCard SaaS is designed to be user-friendly. You can create and customize your digital business card in minutes without any technical knowledge.'
+    question: 'Do I need technical skills to use Kardex?',
+    answer: 'Not at all! Kardex is designed to be user-friendly. You can create and customize your digital business card in minutes without any technical knowledge.'
   },
   {
     id: 5,

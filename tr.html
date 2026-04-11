@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kardex — İhtiyacınız Olan Son Kart</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Inter"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50:  '#f0fdf9', 100: '#ccfbef', 200: '#99f6e0', 300: '#5eead4',
+              400: '#2dd4bf', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e',
+              800: '#115e59', 900: '#134e4a',
+            },
+          },
+          animation: {
+            'ticker': 'ticker 28s linear infinite',
+            'fade-up': 'fadeUp 0.7s ease forwards',
+            'glow-pulse': 'glowPulse 3s ease-in-out infinite',
+          },
+          keyframes: {
+            ticker:    { '0%': { transform: 'translateX(0)' }, '100%': { transform: 'translateX(-50%)' } },
+            fadeUp:    { '0%': { opacity: '0', transform: 'translateY(24px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+            glowPulse: { '0%, 100%': { opacity: '0.5', transform: 'scale(1)' }, '50%': { opacity: '0.8', transform: 'scale(1.05)' } },
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+    body { background-color: #020617; color: #e2e8f0; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+    .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.07); }
+    .glass-strong { background: rgba(255,255,255,0.055); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+    .orb { position: absolute; border-radius: 9999px; filter: blur(80px); pointer-events: none; z-index: 0; }
+    .gradient-text { background: linear-gradient(135deg, #5eead4 0%, #14b8a6 40%, #a78bfa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .gradient-text-white { background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #14b8a6, #0d9488); color: white; font-weight: 700; border-radius: 12px; transition: all 0.2s; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(20,184,166,0.35); }
+    .btn-secondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #94a3b8; font-weight: 600; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); transition: all 0.2s; }
+    .btn-secondary:hover { transform: translateY(-2px); color: white; border-color: rgba(255,255,255,0.25); }
+    .nav-blur { background: rgba(2,6,23,0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .ticker-track { display: flex; width: max-content; animation: ticker 28s linear infinite; }
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .shimmer-border { position: relative; }
+    .shimmer-border::before { content: ''; position: absolute; inset: -1px; border-radius: inherit; background: linear-gradient(135deg, #14b8a6, #6d28d9, #14b8a6); background-size: 200% 200%; animation: shimmerBorder 4s linear infinite; z-index: -1; }
+    @keyframes shimmerBorder { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    .faq-chevron { transition: transform 0.3s ease; }
+    .faq-chevron.open { transform: rotate(180deg); }
+    .nfc-card { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; position: relative; transition: transform 0.4s ease, box-shadow 0.4s ease; }
+    .nfc-card:hover { transform: rotateY(6deg) rotateX(3deg) translateY(-6px); box-shadow: 20px 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(20,184,166,0.1); }
+    .nfc-card::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%); pointer-events: none; }
+    .lang-active { color: #5eead4; font-weight: 700; }
+  </style>
+</head>
+
+<body>
+
+<nav class="nav-blur fixed top-0 left-0 right-0 z-50 py-4 px-6 lg:px-12">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+
+    <a href="#" class="flex items-center gap-2 group">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-lg shadow-teal-500/30">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white" opacity="0.9"/>
+          <rect x="9" y="1" width="6" height="6" rx="1.5" fill="white" opacity="0.6"/>
+          <rect x="1" y="9" width="6" height="6" rx="1.5" fill="white" opacity="0.6"/>
+          <rect x="9" y="9" width="6" height="6" rx="1.5" fill="white" opacity="0.9"/>
+        </svg>
+      </div>
+      <span class="text-white font-bold text-xl tracking-tight">Kardex</span>
+    </a>
+
+    <div class="hidden md:flex items-center gap-8 text-sm text-slate-400 font-medium">
+      <a href="#how-it-works" class="hover:text-white transition-colors">Nasıl Çalışır</a>
+      <a href="#features"     class="hover:text-white transition-colors">Özellikler</a>
+      <a href="#pricing"      class="hover:text-white transition-colors">Fiyatlandırma</a>
+      <a href="#faq"          class="hover:text-white transition-colors">SSS</a>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <!-- Language Switcher -->
+      <div class="hidden sm:flex items-center gap-1 text-xs font-semibold text-slate-500">
+        <a href="/" class="hover:text-white transition-colors px-1.5 py-0.5 rounded">EN</a>
+        <span class="text-white/20">|</span>
+        <a href="/ar.html" class="hover:text-white transition-colors px-1.5 py-0.5 rounded">عربي</a>
+        <span class="text-white/20">|</span>
+        <a href="/tr.html" class="lang-active px-1.5 py-0.5 rounded">TR</a>
+      </div>
+      <a href="#pricing" class="btn-primary px-5 py-2.5 text-sm hidden sm:inline-flex">Hemen Başla →</a>
+    </div>
+
+  </div>
+</nav>
+
+
+<!-- HERO -->
+<section id="hero" class="relative min-h-screen flex items-center justify-center px-6 pt-24 pb-16 overflow-hidden">
+  <div class="orb w-[600px] h-[600px] bg-teal-500/10 top-[-100px] left-[-200px] animate-glow-pulse"></div>
+  <div class="orb w-[500px] h-[500px] bg-violet-600/10 bottom-[-50px] right-[-150px] animate-glow-pulse" style="animation-delay:1.5s"></div>
+  <div class="orb w-[300px] h-[300px] bg-teal-400/8 top-[40%] left-[50%] translate-x-[-50%]"></div>
+
+  <div class="relative z-10 max-w-5xl mx-auto text-center">
+
+    <div class="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 text-xs font-semibold text-teal-300 mb-6 reveal">
+      <span class="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></span>
+      NFC ile güçlendirildi · Anlık güncellemeler · Sıfır kâğıt israfı
+    </div>
+
+    <h1 class="text-5xl sm:text-6xl lg:text-8xl font-black leading-[0.95] tracking-tight mb-6 reveal" style="animation-delay:0.1s">
+      <span class="gradient-text-white">Kâğıt kartlar</span><br/>
+      <span class="gradient-text">artık tarihe karıştı.</span>
+    </h1>
+
+    <p class="text-slate-400 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed mb-10 reveal" style="animation-delay:0.2s">
+      Tek dokunuş. Tüm detaylar. Kardex, tek şık kartı canlı bir dijital kimliğe dönüştürür — uygulama gerekmez.
+    </p>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 reveal" style="animation-delay:0.3s">
+      <a href="#pricing" class="btn-primary px-8 py-4 text-base w-full sm:w-auto text-center">Kartları Satın Al — $29.99</a>
+      <a href="#" class="btn-secondary px-8 py-4 text-base w-full sm:w-auto text-center">Ücretsiz Profil Oluştur ↗</a>
+    </div>
+
+    <div class="mt-16 sm:mt-20 reveal" style="animation-delay:0.45s">
+      <div class="relative inline-block">
+        <div class="absolute inset-[-20%] bg-teal-500/10 rounded-full blur-3xl animate-glow-pulse"></div>
+        <div class="nfc-card w-80 sm:w-96 h-52 sm:h-56 mx-auto p-7 cursor-pointer select-none">
+          <div class="relative z-10 h-full flex flex-col justify-between">
+            <div class="flex items-start justify-between">
+              <div class="w-10 h-10 rounded-full border border-teal-400/40 flex items-center justify-center">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" stroke-width="2">
+                  <path d="M12 20.5C7.3 20.5 3.5 16.7 3.5 12S7.3 3.5 12 3.5 20.5 7.3 20.5 12"/>
+                  <path d="M12 16.5c-2.5 0-4.5-2-4.5-4.5S9.5 7.5 12 7.5"/>
+                  <path d="M12 12.5c-.3 0-.5-.2-.5-.5s.2-.5.5-.5.5.2.5.5-.2.5-.5.5z" fill="#14b8a6"/>
+                </svg>
+              </div>
+              <div class="text-right">
+                <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1">Dijital Kimlik</p>
+                <p class="text-white font-bold text-lg">Alex Morgan</p>
+                <p class="text-teal-400 text-sm font-medium">Kurucu Ortak & CEO</p>
+              </div>
+            </div>
+            <div class="flex items-end justify-between">
+              <span class="text-slate-600 font-bold text-sm tracking-wider">KARDEX</span>
+              <div class="flex flex-col gap-1 items-end">
+                <div class="flex items-center gap-2">
+                  <div class="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></div>
+                  <span class="text-slate-400 text-xs">kardex.io/alexmorgan</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 20px 20px;"></div>
+        </div>
+        <div class="absolute -top-4 -left-8 glass-strong rounded-xl px-4 py-2.5 text-xs font-semibold hidden sm:block animate-bounce" style="animation-duration:3s">
+          <span class="text-teal-400">⚡ 0,3 sn</span>
+          <span class="text-slate-400 ml-1">dokunuştan profile</span>
+        </div>
+        <div class="absolute -bottom-4 -right-10 glass-strong rounded-xl px-4 py-2.5 text-xs font-semibold hidden sm:block" style="animation: fadeUp 1s ease 0.8s both">
+          <span class="text-violet-400">📊 247</span>
+          <span class="text-slate-400 ml-1">bu hafta görüntüleme</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- SOCIAL PROOF -->
+<section class="py-8 border-y border-white/5 overflow-hidden bg-white/[0.015]">
+  <div class="flex items-center gap-4 mb-3 px-6 max-w-7xl mx-auto">
+    <div class="h-px flex-1 bg-white/5"></div>
+    <p class="text-slate-500 text-xs font-semibold uppercase tracking-widest whitespace-nowrap">1.000'den fazla profesyonelin güveni</p>
+    <div class="h-px flex-1 bg-white/5"></div>
+  </div>
+  <div class="relative overflow-hidden">
+    <div class="absolute left-0 top-0 bottom-0 w-24 z-10" style="background: linear-gradient(90deg, #020617, transparent)"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-24 z-10" style="background: linear-gradient(-90deg, #020617, transparent)"></div>
+    <div class="ticker-track">
+      <div class="flex items-center gap-10 px-5">
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🏢</span> Stripe</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🚀</span> Notion</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">💼</span> Figma</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">📊</span> Airtable</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">⚡</span> Vercel</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🌐</span> Linear</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🎯</span> Loom</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🔮</span> Prismic</span>
+        <span class="w-px h-4 bg-white/10"></span>
+        <span class="text-teal-400 text-xs font-bold uppercase tracking-widest whitespace-nowrap">★ 4,9/5 820'den fazla değerlendirmeden</span>
+        <span class="w-px h-4 bg-white/10"></span>
+      </div>
+      <div class="flex items-center gap-10 px-5" aria-hidden="true">
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🏢</span> Stripe</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🚀</span> Notion</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">💼</span> Figma</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">📊</span> Airtable</span>
+        <span class="w-px h-4 bg-white/10"></span>
+        <span class="text-teal-400 text-xs font-bold uppercase tracking-widest whitespace-nowrap">★ 4,9/5 820'den fazla değerlendirmeden</span>
+        <span class="w-px h-4 bg-white/10"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works" class="py-24 px-6 relative overflow-hidden">
+  <div class="orb w-[500px] h-[500px] bg-violet-600/8 top-0 right-[-100px]"></div>
+  <div class="max-w-6xl mx-auto relative z-10">
+    <div class="text-center mb-16 reveal">
+      <p class="text-teal-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">Nasıl Çalışır</p>
+      <h2 class="text-4xl sm:text-5xl font-black gradient-text-white mb-4">Bu kadar basit.<br/>Bu kadar etkili.</h2>
+      <p class="text-slate-500 max-w-md mx-auto">Kutudan bağlantıya üç adım. Karmaşıklık yok.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6 lg:gap-8">
+
+      <div class="glass rounded-2xl p-8 relative reveal group hover:border-teal-500/30 transition-all duration-300">
+        <div class="absolute -top-4 left-8 w-8 h-8 rounded-full bg-teal-500/20 border border-teal-400/40 flex items-center justify-center text-teal-400 text-xs font-bold">1</div>
+        <div class="w-14 h-14 rounded-2xl bg-teal-500/10 border border-teal-400/20 flex items-center justify-center mb-6">
+          <i data-lucide="pen-tool" class="w-6 h-6 text-teal-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-xl mb-3">Profilinizi Tasarlayın</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">Dijital kimliğinizi dakikalar içinde tasarlayın. Bağlantılar, sosyal ağlar, fotoğraflar ve biyografi ekleyin — istediğiniz zaman düzenleyin.</p>
+        <div class="mt-6 glass rounded-xl p-4 text-xs space-y-2">
+          <div class="flex items-center gap-2">
+            <div class="w-6 h-6 rounded-full bg-teal-400/20"></div>
+            <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+              <div class="h-full w-3/4 bg-teal-400/50 rounded-full"></div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <div class="h-1.5 w-12 bg-white/8 rounded-full"></div>
+            <div class="h-1.5 w-16 bg-white/8 rounded-full"></div>
+            <div class="h-1.5 w-10 bg-teal-400/30 rounded-full"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-8 relative reveal group hover:border-violet-500/30 transition-all duration-300" style="transition-delay:0.1s">
+        <div class="absolute -top-4 left-8 w-8 h-8 rounded-full bg-violet-500/20 border border-violet-400/40 flex items-center justify-center text-violet-400 text-xs font-bold">2</div>
+        <div class="w-14 h-14 rounded-2xl bg-violet-500/10 border border-violet-400/20 flex items-center justify-center mb-6">
+          <i data-lucide="wifi" class="w-6 h-6 text-violet-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-xl mb-3">Dokunarak Paylaşın</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">Kardex'i herhangi bir modern akıllı telefona yaklaştırın. NFC gerisini halleder — uygulama yok, QR tarama yok, engel yok.</p>
+        <div class="mt-6 flex items-center justify-center gap-4">
+          <div class="w-10 h-6 rounded-md bg-teal-400/10 border border-teal-400/30 flex items-center justify-center">
+            <span class="text-teal-400 text-[8px] font-bold">NFC</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-1.5 h-1.5 rounded-full bg-violet-400 animate-ping"></div>
+            <div class="w-1 h-1 rounded-full bg-violet-400/60 animate-ping" style="animation-delay:0.2s"></div>
+            <div class="w-0.5 h-0.5 rounded-full bg-violet-400/30 animate-ping" style="animation-delay:0.4s"></div>
+          </div>
+          <div class="w-10 h-16 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center">
+            <i data-lucide="smartphone" class="w-5 h-5 text-slate-500"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-8 relative reveal group hover:border-blue-500/30 transition-all duration-300" style="transition-delay:0.2s">
+        <div class="absolute -top-4 left-8 w-8 h-8 rounded-full bg-blue-500/20 border border-blue-400/40 flex items-center justify-center text-blue-400 text-xs font-bold">3</div>
+        <div class="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-400/20 flex items-center justify-center mb-6">
+          <i data-lucide="users" class="w-6 h-6 text-blue-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-xl mb-3">Bağlantıların Büyümesini İzleyin</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">Profilinizi anında görecekler. Kişi kaydetmek, LinkedIn'i takip etmek veya toplantı ayarlamak için tek dokunuş. Bitti.</p>
+        <div class="mt-6 glass rounded-xl p-4 text-xs space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-green-400 font-semibold">+1 bugün</span>
+            <span class="text-slate-500">yeni bağlantı</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-blue-400 font-semibold">3 sn önce</span>
+            <span class="text-slate-500">LinkedIn'e tıkladı</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- FEATURES -->
+<section id="features" class="py-24 px-6 relative overflow-hidden">
+  <div class="orb w-[600px] h-[600px] bg-teal-500/6 bottom-0 left-[-200px]"></div>
+  <div class="max-w-6xl mx-auto relative z-10">
+    <div class="text-center mb-16 reveal">
+      <p class="text-teal-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">Neden Kardex</p>
+      <h2 class="text-4xl sm:text-5xl font-black gradient-text-white mb-4">Gerçekten çalıştığınız<br/>şekle göre tasarlandı.</h2>
+      <p class="text-slate-500 max-w-md mx-auto">İhtiyacınız olan her şey. Fazlası yok.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <div class="glass rounded-2xl p-7 reveal group hover:border-teal-400/20 transition-all duration-300 col-span-1 sm:col-span-2 lg:col-span-1">
+        <div class="w-12 h-12 rounded-xl bg-teal-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+          <i data-lucide="zap" class="w-5 h-5 text-teal-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-lg mb-2">NFC Hızı</h3>
+        <p class="text-slate-400 text-sm leading-relaxed mb-5">Dokunuştan profile 0,3 saniyeden az. Yükleme döndürücüsü yok. Kaçırılan bağlantı yok.</p>
+        <div class="space-y-2">
+          <div class="flex justify-between text-xs text-slate-500 mb-1">
+            <span>Kardex NFC</span>
+            <span class="text-teal-400 font-semibold">0,3 sn</span>
+          </div>
+          <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-teal-400 to-teal-500 rounded-full" style="width:95%"></div></div>
+          <div class="flex justify-between text-xs text-slate-500 mb-1">
+            <span>QR Tarama</span>
+            <span class="text-slate-600">4,2 sn</span>
+          </div>
+          <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-slate-700 rounded-full" style="width:28%"></div></div>
+          <div class="flex justify-between text-xs text-slate-500 mb-1">
+            <span>Kâğıt Kartvizit</span>
+            <span class="text-slate-600">Kayıp gitti</span>
+          </div>
+          <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-slate-800 rounded-full" style="width:5%"></div></div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-7 reveal group hover:border-violet-400/20 transition-all duration-300" style="transition-delay:0.1s">
+        <div class="w-12 h-12 rounded-xl bg-violet-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+          <i data-lucide="refresh-cw" class="w-5 h-5 text-violet-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-lg mb-2">Dinamik Güncellemeler</h3>
+        <p class="text-slate-400 text-sm leading-relaxed mb-5">Unvanınızı değiştirin, yeni bir şirkete geçin, bağlantı ekleyin — bir kez güncelleyin, her yerde görünsün. Kartınız asla eskimez.</p>
+        <div class="glass rounded-xl p-3 text-xs space-y-2">
+          <div class="flex items-center gap-2 text-slate-400">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-teal-400"></i>
+            Yeni unvan güncellendi — anında
+          </div>
+          <div class="flex items-center gap-2 text-slate-400">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-teal-400"></i>
+            Yeni portföy bağlantısı eklendi
+          </div>
+          <div class="flex items-center gap-2 text-slate-400">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-teal-400"></i>
+            0 yeni baskı gerekli
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-7 reveal group hover:border-blue-400/20 transition-all duration-300" style="transition-delay:0.15s">
+        <div class="w-12 h-12 rounded-xl bg-blue-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+          <i data-lucide="bar-chart-2" class="w-5 h-5 text-blue-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-lg mb-2">Analitik Panosu</h3>
+        <p class="text-slate-400 text-sm leading-relaxed mb-5">Kartınıza kimin dokunduğunu, ne zaman ve neye tıkladığını tam olarak bilin. Her etkileşimi içgörüye dönüştürün.</p>
+        <div class="flex items-end gap-1.5 h-12">
+          <div class="flex-1 rounded-t bg-blue-400/20" style="height:40%"></div>
+          <div class="flex-1 rounded-t bg-blue-400/30" style="height:60%"></div>
+          <div class="flex-1 rounded-t bg-blue-400/40" style="height:50%"></div>
+          <div class="flex-1 rounded-t bg-blue-400/50" style="height:80%"></div>
+          <div class="flex-1 rounded-t bg-blue-400/60" style="height:65%"></div>
+          <div class="flex-1 rounded-t bg-blue-400/70" style="height:90%"></div>
+          <div class="flex-1 rounded-t bg-blue-400"    style="height:100%"></div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-7 reveal group hover:border-amber-400/20 transition-all duration-300" style="transition-delay:0.2s">
+        <div class="w-12 h-12 rounded-xl bg-amber-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+          <i data-lucide="smartphone" class="w-5 h-5 text-amber-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-lg mb-2">Uygulama Gerektirmez</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">Her modern iPhone ve Android'de otomatik çalışır. Onların hiçbir şey yüklemesi gerekmiyor — asla.</p>
+      </div>
+
+      <div class="glass rounded-2xl p-7 reveal group hover:border-green-400/20 transition-all duration-300" style="transition-delay:0.25s">
+        <div class="w-12 h-12 rounded-xl bg-green-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+          <i data-lucide="leaf" class="w-5 h-5 text-green-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-lg mb-2">Sıfır Kâğıt İsrafı</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">Ortalama bir profesyonel yılda 250'den fazla kartvizit kullanır. Kardex hepsinin yerini alır — sonsuza kadar.</p>
+      </div>
+
+      <div class="glass rounded-2xl p-7 reveal group hover:border-rose-400/20 transition-all duration-300" style="transition-delay:0.3s">
+        <div class="w-12 h-12 rounded-xl bg-rose-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+          <i data-lucide="layers" class="w-5 h-5 text-rose-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-lg mb-2">Çoklu Profil Modları</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">Uygulamada tek dokunuşla iş, kişisel ve yan proje profilleri arasında geçiş yapın. Tek kart, birden fazla kimlik.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- PRICING -->
+<section id="pricing" class="py-24 px-6 relative overflow-hidden">
+  <div class="orb w-[500px] h-[500px] bg-teal-400/8 top-[-100px] left-[50%] translate-x-[-50%]"></div>
+  <div class="max-w-5xl mx-auto relative z-10">
+    <div class="text-center mb-16 reveal">
+      <p class="text-teal-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">Kartınızı Alın</p>
+      <h2 class="text-4xl sm:text-5xl font-black gradient-text-white mb-4">Tek kart. Sonsuz değer.</h2>
+      <p class="text-slate-500 max-w-md mx-auto">Abonelik yok. Sürpriz yok. Bir kez öde — sonsuza kadar kullan.</p>
+    </div>
+    <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+
+      <div class="glass rounded-2xl p-8 reveal flex flex-col">
+        <div class="mb-6">
+          <p class="text-slate-400 text-sm font-semibold uppercase tracking-widest mb-2">Ücretsiz Profil</p>
+          <div class="flex items-end gap-1.5 mb-2">
+            <span class="text-white font-black text-5xl">$0</span>
+          </div>
+          <p class="text-slate-500 text-sm">Çevrimiçi dijital varlığınız.</p>
+        </div>
+        <ul class="space-y-3 flex-1 mb-8">
+          <li class="flex items-center gap-3 text-sm text-slate-400"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> kardex.io'da özel profil bağlantısı</li>
+          <li class="flex items-center gap-3 text-sm text-slate-400"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> 5 bağlantıya kadar</li>
+          <li class="flex items-center gap-3 text-sm text-slate-400"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> Temel analitik (yalnızca görüntülemeler)</li>
+          <li class="flex items-center gap-3 text-sm text-slate-400"><i data-lucide="x" class="w-4 h-4 text-slate-600 shrink-0"></i> <span class="text-slate-600">Fiziksel NFC kartı yok</span></li>
+        </ul>
+        <a href="#" class="btn-secondary text-center py-3.5 text-sm rounded-xl block">Ücretsiz Profil Oluştur</a>
+      </div>
+
+      <div class="shimmer-border rounded-2xl reveal" style="transition-delay:0.15s">
+        <div class="glass-strong rounded-2xl p-8 flex flex-col relative overflow-hidden h-full">
+          <div class="absolute top-5 right-5 bg-teal-400/10 border border-teal-400/30 text-teal-400 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">En Çok Satan</div>
+          <div class="mb-6">
+            <p class="text-teal-400 text-sm font-semibold uppercase tracking-widest mb-2">Mat Siyah NFC Kartı</p>
+            <div class="flex items-end gap-1.5 mb-2">
+              <span class="text-white font-black text-5xl">$29</span>
+              <span class="text-white text-xl font-bold mb-1">.99</span>
+            </div>
+            <p class="text-slate-400 text-sm">Tek seferlik ödeme. Ömür boyu güncellemeler.</p>
+          </div>
+          <div class="nfc-card rounded-xl h-24 mb-6 flex items-center justify-center relative overflow-hidden">
+            <div class="relative z-10 flex items-center gap-3">
+              <div class="text-slate-600">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M12 20.5C7.3 20.5 3.5 16.7 3.5 12S7.3 3.5 12 3.5 20.5 7.3 20.5 12"/>
+                  <path d="M12 16.5c-2.5 0-4.5-2-4.5-4.5S9.5 7.5 12 7.5"/>
+                </svg>
+              </div>
+              <span class="text-white font-bold text-lg tracking-widest">KARDEX</span>
+            </div>
+            <div class="absolute bottom-2 right-3 text-[9px] text-slate-700 font-medium tracking-widest">BLACK MATTE · NFC</div>
+          </div>
+          <ul class="space-y-3 flex-1 mb-8">
+            <li class="flex items-center gap-3 text-sm text-slate-300"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> Premium mat siyah NFC kartı</li>
+            <li class="flex items-center gap-3 text-sm text-slate-300"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> Sınırsız bağlantı ve profil</li>
+            <li class="flex items-center gap-3 text-sm text-slate-300"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> Tam analitik panosu</li>
+            <li class="flex items-center gap-3 text-sm text-slate-300"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> Kalıcı dinamik bağlantı güncellemeleri</li>
+            <li class="flex items-center gap-3 text-sm text-slate-300"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> Çoklu profil geçişi</li>
+            <li class="flex items-center gap-3 text-sm text-slate-300"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> Öncelikli destek</li>
+          </ul>
+          <a href="#" class="btn-primary text-center py-4 text-sm rounded-xl block">Kartları Satın Al — $29.99 →</a>
+          <p class="text-center text-slate-600 text-xs mt-3">Ücretsiz kargo · 3-5 iş günü içinde gönderilir</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- TESTIMONIALS -->
+<section class="py-16 px-6 border-y border-white/5 bg-white/[0.01]">
+  <div class="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
+
+    <div class="glass rounded-2xl p-7 reveal">
+      <div class="flex gap-1 mb-4"><span class="text-teal-400 text-sm">★★★★★</span></div>
+      <p class="text-slate-300 text-sm leading-relaxed mb-5">"Kardex'i bir konferansta teslim ettim. Kişinin telefonu doğrudan profilime açtığında yüzündeki ifade — paha biçilmez. Ekibim için 3 tane daha sipariş ettim."</p>
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-teal-400 to-violet-500 flex items-center justify-center text-white text-xs font-bold">JK</div>
+        <div>
+          <p class="text-white text-sm font-semibold">Jamie K.</p>
+          <p class="text-slate-500 text-xs">Kurucu, Elevate Labs</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass rounded-2xl p-7 reveal" style="transition-delay:0.1s">
+      <div class="flex gap-1 mb-4"><span class="text-teal-400 text-sm">★★★★★</span></div>
+      <p class="text-slate-300 text-sm leading-relaxed mb-5">"Geçen yıl 3 kez iş değiştirdim. Yeni baskı yok. Sadece profilimi güncelledim ve dağıttığım her kart otomatik olarak yeni bilgilerimi yansıttı."</p>
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-teal-400 flex items-center justify-center text-white text-xs font-bold">SC</div>
+        <div>
+          <p class="text-white text-sm font-semibold">Sofia C.</p>
+          <p class="text-slate-500 text-xs">Satış Direktörü, Revelo</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass rounded-2xl p-7 reveal" style="transition-delay:0.2s">
+      <div class="flex gap-1 mb-4"><span class="text-teal-400 text-sm">★★★★★</span></div>
+      <p class="text-slate-300 text-sm leading-relaxed mb-5">"Analitik pano oyunun kurallarını değiştirdi. Bir toplantıdan sonra insanların hangi bağlantılara tıkladığını tam olarak görüyorum. Ağ oluşturma için bir CRM gibi."</p>
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-violet-400 to-rose-400 flex items-center justify-center text-white text-xs font-bold">ML</div>
+        <div>
+          <p class="text-white text-sm font-semibold">Marcus L.</p>
+          <p class="text-slate-500 text-xs">Ortak, Northbridge</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- FAQ -->
+<section id="faq" class="py-24 px-6 relative overflow-hidden">
+  <div class="orb w-[400px] h-[400px] bg-violet-600/8 bottom-0 right-[-100px]"></div>
+  <div class="max-w-3xl mx-auto relative z-10">
+    <div class="text-center mb-12 reveal">
+      <p class="text-teal-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">Sık Sorulan Sorular</p>
+      <h2 class="text-4xl sm:text-5xl font-black gradient-text-white mb-4">Sorularınız mı var?</h2>
+      <p class="text-slate-500">Net cevaplarımız var.</p>
+    </div>
+    <div class="space-y-3">
+
+      <div class="glass rounded-2xl overflow-hidden reveal" x-data="{ open: false }">
+        <button @click="open = !open" class="w-full flex items-center justify-between px-7 py-5 text-left group">
+          <span class="text-white font-semibold text-sm sm:text-base">Alıcının bir uygulama yüklemesi gerekiyor mu?</span>
+          <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0 faq-chevron" :class="{ 'open': open }"></i>
+        </button>
+        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2">
+          <div class="px-7 pb-6 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4">
+            Hayır, her iki taraf da uygulama gerektirmez. Biri Kardex'e dokunduğunda, telefonu profilinizi tarayıcıda anında açar. Herhangi bir iPhone (iOS 11+) veya Android (6.0+) ile çalışır.
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl overflow-hidden reveal" x-data="{ open: false }">
+        <button @click="open = !open" class="w-full flex items-center justify-between px-7 py-5 text-left group">
+          <span class="text-white font-semibold text-sm sm:text-base">İşimi veya bilgilerimi değiştirirsem ne olur?</span>
+          <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0 faq-chevron" :class="{ 'open': open }"></i>
+        </button>
+        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2">
+          <div class="px-7 pb-6 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4">
+            İşte sihir bu. Kardex profilinizi kontrol panelinde bir kez güncelleyin; dağıttığınız her kart — geçmiş ve gelecek — bir sonraki dokunuşta yeni bilgilerinizi yansıtacak. Artık asla yeniden baskı yapmayın.
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl overflow-hidden reveal" x-data="{ open: false }">
+        <button @click="open = !open" class="w-full flex items-center justify-between px-7 py-5 text-left group">
+          <span class="text-white font-semibold text-sm sm:text-base">Verilerim özel ve güvenli mi?</span>
+          <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0 faq-chevron" :class="{ 'open': open }"></i>
+        </button>
+        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2">
+          <div class="px-7 pb-6 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4">
+            Kesinlikle. Profilinizde neyin görüneceğini siz kontrol edersiniz. Analitik veriler anonimleştirilmiştir. Verilerinizi asla satmayız. Profil bağlantınız yalnızca paylaşmayı seçerseniz kamuya açık olarak erişilebilir.
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl overflow-hidden reveal" x-data="{ open: false }">
+        <button @click="open = !open" class="w-full flex items-center justify-between px-7 py-5 text-left group">
+          <span class="text-white font-semibold text-sm sm:text-base">Kart ne kadar dayanıklı?</span>
+          <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0 faq-chevron" :class="{ 'open': open }"></i>
+        </button>
+        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2">
+          <div class="px-7 pb-6 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4">
+            Kardex kartları, mat siyah kaplama ile premium PVC'den yapılmıştır — aynı lüks kredi kartı malzemesi. Su geçirmez, çizilmeye dayanıklı ve cüzdanınızda yıllarca yaşamak için tasarlanmıştır. NFC çipi 100.000'den fazla dokunuş için derecelendirilmiştir.
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl overflow-hidden reveal" x-data="{ open: false }">
+        <button @click="open = !open" class="w-full flex items-center justify-between px-7 py-5 text-left group">
+          <span class="text-white font-semibold text-sm sm:text-base">Kardex'i tüm ekibim için kullanabilir miyim?</span>
+          <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0 faq-chevron" :class="{ 'open': open }"></i>
+        </button>
+        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2">
+          <div class="px-7 pb-6 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4">
+            Evet. Her büyüklükteki ekipler için özel markalı toplu siparişler sunuyoruz. Toplu fiyatlandırma ve kişisel onboarding için <span class="text-teal-400">teams@kardex.io</span> ile iletişime geçin.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- FINAL CTA -->
+<section class="py-28 px-6 relative overflow-hidden">
+  <div class="orb w-[700px] h-[700px] bg-teal-500/10 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] animate-glow-pulse"></div>
+  <div class="max-w-3xl mx-auto text-center relative z-10">
+    <div class="reveal">
+      <p class="text-teal-400 text-xs font-bold uppercase tracking-[0.2em] mb-4">İlk Etki Kalıcıdır</p>
+      <h2 class="text-5xl sm:text-6xl lg:text-7xl font-black gradient-text-white leading-tight mb-6">
+        Ölü kartlar<br/>
+        <span class="gradient-text">dağıtmayı bırakın.</span>
+      </h2>
+      <p class="text-slate-400 text-lg max-w-xl mx-auto mb-10">
+        Zaten geçiş yapmış 1.000'den fazla profesyonele katılın. Tek satın alma. Sonsuz bağlantı.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="#pricing" class="btn-primary px-10 py-4 text-base w-full sm:w-auto text-center">Kardex'i Edin — $29.99</a>
+        <a href="#" class="btn-secondary px-10 py-4 text-base w-full sm:w-auto text-center">Ücretsiz Profil Oluştur</a>
+      </div>
+      <p class="text-slate-600 text-xs mt-5">Dünya genelinde ücretsiz kargo · 30 günlük memnuniyet garantisi</p>
+    </div>
+  </div>
+</section>
+
+<footer class="border-t border-white/5 py-10 px-6">
+  <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-slate-600 text-xs">
+    <div class="flex items-center gap-6">
+      <a href="#" class="hover:text-slate-400 transition-colors">Instagram</a>
+      <a href="#" class="hover:text-slate-400 transition-colors">Twitter</a>
+      <a href="#" class="hover:text-slate-400 transition-colors">İletişim</a>
+      <a href="#" class="hover:text-slate-400 transition-colors">Koşullar</a>
+      <a href="#" class="hover:text-slate-400 transition-colors">Gizlilik</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <span>© 2025 · Tüm hakları saklıdır ·</span>
+      <span class="text-slate-400 font-semibold">Kardex</span>
+      <div class="w-6 h-6 rounded-md bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white" opacity="0.9"/>
+          <rect x="9" y="1" width="6" height="6" rx="1.5" fill="white" opacity="0.6"/>
+          <rect x="1" y="9" width="6" height="6" rx="1.5" fill="white" opacity="0.6"/>
+          <rect x="9" y="9" width="6" height="6" rx="1.5" fill="white" opacity="0.9"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+    const revealObserver = new IntersectionObserver(
+      (entries) => { entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add('visible'); revealObserver.unobserve(entry.target); } }); },
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    );
+    document.querySelectorAll('.reveal').forEach((el) => { revealObserver.observe(el); });
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener('click', (e) => {
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+    });
+    setTimeout(() => lucide.createIcons(), 300);
+  });
+</script>
+
+</body>
+</html>

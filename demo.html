@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Khalid Doublali — Kardex</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+          animation: {
+            'fade-in-up': 'fadeInUp 0.55s ease both',
+            'glow-ring':  'glowRing 3s ease-in-out infinite',
+            'shimmer':    'shimmer 3s linear infinite',
+          },
+          keyframes: {
+            fadeInUp: {
+              '0%':   { opacity: '0', transform: 'translateY(18px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            glowRing: {
+              '0%,100%': { boxShadow: '0 0 0 3px rgba(20,184,166,0.25), 0 0 20px rgba(20,184,166,0.12)' },
+              '50%':     { boxShadow: '0 0 0 4px rgba(20,184,166,0.45), 0 0 32px rgba(20,184,166,0.28)' },
+            },
+            shimmer: {
+              '0%':   { backgroundPosition: '-200% center' },
+              '100%': { backgroundPosition: '200% center' },
+            },
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      min-height: 100%;
+      background-color: #020617;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #e2e8f0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Phone-frame: fills viewport on mobile, narrow column on desktop */
+    .phone-frame {
+      width: 100%;
+      max-width: 450px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      position: relative;
+    }
+
+    @media (min-width: 520px) {
+      body {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 40px 0 80px;
+        background-image:
+          radial-gradient(ellipse 60% 40% at 20% 10%, rgba(20,184,166,0.06) 0%, transparent 60%),
+          radial-gradient(ellipse 50% 50% at 80% 80%, rgba(109,40,217,0.06) 0%, transparent 60%);
+      }
+      .phone-frame {
+        border-radius: 36px;
+        border: 1px solid rgba(255,255,255,0.07);
+        box-shadow:
+          0 40px 120px rgba(0,0,0,0.7),
+          0 0 0 1px rgba(255,255,255,0.04),
+          inset 0 1px 0 rgba(255,255,255,0.06);
+        overflow: hidden;
+      }
+    }
+
+    .glass {
+      background: rgba(255,255,255,0.035);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .avatar-ring { animation: glowRing 3s ease-in-out infinite; }
+
+    .btn-save {
+      background: linear-gradient(270deg, #14b8a6, #0d9488, #5eead4, #14b8a6);
+      background-size: 300% 100%;
+      animation: shimmer 3s linear infinite;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 8px 32px rgba(20,184,166,0.35);
+    }
+    .btn-save:active { transform: scale(0.97); }
+
+    .action-btn {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      transition: all 0.2s ease;
+    }
+    .action-btn:active, .action-btn:hover {
+      background: rgba(20,184,166,0.12);
+      border-color: rgba(20,184,166,0.35);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(20,184,166,0.18);
+    }
+
+    .link-btn {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: all 0.22s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .link-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(20,184,166,0.07), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.4s ease;
+    }
+    .link-btn:hover::before { transform: translateX(100%); }
+    .link-btn:hover, .link-btn:focus {
+      border-color: rgba(20,184,166,0.3);
+      background: rgba(20,184,166,0.06);
+      transform: translateX(3px);
+      box-shadow: -4px 0 0 rgba(20,184,166,0.5), 0 0 24px rgba(20,184,166,0.08);
+      outline: none;
+    }
+    .link-btn:active { transform: scale(0.98); }
+
+    /* Greyed-out placeholder links — not clickable yet */
+    .link-btn.placeholder {
+      opacity: 0.45;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    /* Stagger delays */
+    .s1  { animation-delay: 0.05s; }
+    .s2  { animation-delay: 0.12s; }
+    .s3  { animation-delay: 0.18s; }
+    .s4  { animation-delay: 0.24s; }
+    .s5  { animation-delay: 0.30s; }
+    .s6  { animation-delay: 0.36s; }
+    .s7  { animation-delay: 0.42s; }
+    .s8  { animation-delay: 0.48s; }
+    .s9  { animation-delay: 0.54s; }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+  </style>
+</head>
+
+<body>
+<div class="phone-frame">
+
+  <!-- Ambient glow orbs -->
+  <div class="pointer-events-none absolute inset-0 overflow-hidden z-0">
+    <div class="absolute w-72 h-72 rounded-full blur-3xl bg-teal-500/10 -top-16 -right-16"></div>
+    <div class="absolute w-64 h-64 rounded-full blur-3xl bg-violet-600/8  bottom-32 -left-20"></div>
+  </div>
+
+  <main class="relative z-10 px-5 pt-10 pb-8 flex flex-col gap-6">
+
+    <!-- ══════════════════════════════════════════════════════
+         1. HEADER
+    ══════════════════════════════════════════════════════ -->
+    <header class="flex flex-col items-center text-center gap-4 animate-fade-in-up s1">
+
+      <!-- Avatar -->
+      <!-- PLACEHOLDER: swap the initials div below for a real <img> tag once
+           Khalid provides a photo. Example:
+           <img src="YOUR_PHOTO_URL" class="w-24 h-24 rounded-full object-cover border-[3px] border-[#020617]" /> -->
+      <div class="avatar-ring rounded-full p-[3px] bg-gradient-to-br from-teal-400 via-teal-500 to-violet-500">
+        <img
+          src="khalidpic.jpg"
+          alt="Khalid Doublali"
+          class="w-24 h-24 rounded-full object-cover object-top border-[3px] border-[#020617]"
+        />
+      </div>
+
+      <!-- Name + verified badge -->
+      <div class="space-y-1.5">
+        <div class="flex items-center justify-center gap-2">
+          <h1 class="text-white font-extrabold text-2xl tracking-tight">Khalid Doublali</h1>
+          <span title="Verified Kardex user" class="w-5 h-5 rounded-full bg-teal-400/15 border border-teal-400/30 flex items-center justify-center shrink-0">
+            <i data-lucide="check" class="w-3 h-3 text-teal-400" stroke-width="3"></i>
+          </span>
+        </div>
+
+        <p class="text-slate-400 font-medium text-sm tracking-wide">
+          Businessman &amp; Entrepreneur
+        </p>
+
+        <!-- PLACEHOLDER bio — replace with Khalid's real tagline -->
+        <p class="text-slate-500 text-xs leading-relaxed max-w-[260px] mx-auto pt-1 italic">
+          Building boldly. Connecting purposefully.
+        </p>
+      </div>
+
+      <!-- Live indicator -->
+      <div class="flex items-center gap-1.5 glass rounded-full px-3.5 py-1.5 text-xs text-slate-400">
+        <span class="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse shrink-0"></span>
+        <span>Connect with <strong class="text-slate-200 font-semibold">Khalid</strong></span>
+      </div>
+
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════
+         2. SAVE CONTACT
+         Triggers a .vcf download. On iOS this opens "Add to
+         Contacts" natively. On Android, the Contacts app.
+         Update vCard fields in handleSaveContact() as needed.
+    ══════════════════════════════════════════════════════ -->
+    <div class="animate-fade-in-up s2">
+      <button
+        id="saveContactBtn"
+        onclick="handleSaveContact()"
+        class="btn-save w-full rounded-2xl py-4 flex items-center justify-center gap-3 font-bold text-white text-base"
+        aria-label="Save Khalid Doublali to contacts"
+      >
+        <i data-lucide="user-plus" class="w-5 h-5"></i>
+        Save Contact
+      </button>
+      <p class="text-center text-slate-600 text-[11px] mt-2 font-medium tracking-wide">
+        Saves directly to your phone's contacts
+      </p>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════
+         3. QUICK ACTIONS — Call, WhatsApp, Email, Location
+    ══════════════════════════════════════════════════════ -->
+    <section aria-label="Quick actions" class="animate-fade-in-up s3">
+      <div class="grid grid-cols-4 gap-3">
+
+        <!-- Call ← REAL -->
+        <a href="tel:+905375861015"
+           class="action-btn rounded-2xl flex flex-col items-center justify-center gap-2 py-4 group"
+           aria-label="Call Khalid">
+          <div class="w-10 h-10 rounded-xl bg-teal-400/10 flex items-center justify-center group-hover:bg-teal-400/20 transition-colors">
+            <i data-lucide="phone" class="w-5 h-5 text-teal-400"></i>
+          </div>
+          <span class="text-slate-400 text-[11px] font-medium">Call</span>
+        </a>
+
+        <!-- WhatsApp ← REAL -->
+        <a href="https://wa.me/905375861015"
+           target="_blank" rel="noopener noreferrer"
+           class="action-btn rounded-2xl flex flex-col items-center justify-center gap-2 py-4 group"
+           aria-label="WhatsApp Khalid">
+          <div class="w-10 h-10 rounded-xl bg-green-400/10 flex items-center justify-center group-hover:bg-green-400/20 transition-colors">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="#4ade80"/>
+              <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.978-1.304A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a8 8 0 01-4.065-1.11l-.29-.173-3.01.788.802-2.93-.19-.302A8 8 0 1112 20z" fill="#4ade80"/>
+            </svg>
+          </div>
+          <span class="text-slate-400 text-[11px] font-medium">WhatsApp</span>
+        </a>
+
+        <!-- Email ← PLACEHOLDER -->
+        <a href="/cdn-cgi/l/email-protection#94fffcf5f8fdf0d4e4f8f5f7f1fcfbf8f0f1e6baf7fbf9" class="action-btn rounded-2xl flex flex-col items-center justify-center gap-2 py-4 group" aria-label="Email Khalid" title="Placeholder — update with real email">
+          <div class="w-10 h-10 rounded-xl bg-violet-400/10 flex items-center justify-center group-hover:bg-violet-400/20 transition-colors">
+            <i data-lucide="mail" class="w-5 h-5 text-violet-400"></i>
+          </div>
+          <span class="text-slate-400 text-[11px] font-medium">Email</span>
+        </a>
+
+        <!-- Location ← PLACEHOLDER (Istanbul as default) -->
+        <a href="https://maps.google.com/?q=Istanbul,Turkey"
+           target="_blank" rel="noopener noreferrer"
+           class="action-btn rounded-2xl flex flex-col items-center justify-center gap-2 py-4 group"
+           aria-label="Khalid's location"
+           title="Placeholder — update with real address">
+          <div class="w-10 h-10 rounded-xl bg-rose-400/10 flex items-center justify-center group-hover:bg-rose-400/20 transition-colors">
+            <i data-lucide="map-pin" class="w-5 h-5 text-rose-400"></i>
+          </div>
+          <span class="text-slate-400 text-[11px] font-medium">Location</span>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         4. LINK STACK
+    ══════════════════════════════════════════════════════ -->
+    <section aria-label="Khalid's links" class="flex flex-col gap-3">
+
+      <!-- Instagram ← REAL -->
+      <a href="https://www.instagram.com/khalid.doublali/"
+         target="_blank" rel="noopener noreferrer"
+         class="link-btn rounded-2xl px-5 py-4 flex items-center gap-4 group animate-fade-in-up s4"
+         aria-label="Khalid's Instagram">
+        <div class="w-10 h-10 rounded-xl bg-pink-500/15 border border-pink-500/20 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
+            <rect x="2" y="2" width="20" height="20" rx="5" stroke="url(#ig1)" stroke-width="2"/>
+            <circle cx="12" cy="12" r="4" stroke="url(#ig1)" stroke-width="2"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="#f472b6"/>
+            <defs>
+              <linearGradient id="ig1" x1="2" y1="22" x2="22" y2="2">
+                <stop offset="0%" stop-color="#f59e0b"/>
+                <stop offset="50%" stop-color="#ec4899"/>
+                <stop offset="100%" stop-color="#818cf8"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-white font-semibold text-sm">Instagram</p>
+          <p class="text-slate-500 text-xs truncate">@khalid.doublali</p>
+        </div>
+        <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-600 group-hover:text-teal-400 transition-colors shrink-0"></i>
+      </a>
+
+      <!-- LinkedIn ← PLACEHOLDER -->
+      <div class="link-btn placeholder rounded-2xl px-5 py-4 flex items-center gap-4 animate-fade-in-up s5"
+           title="Placeholder — add LinkedIn URL">
+        <div class="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/20 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
+            <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="2" y="9" width="4" height="12" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="4" cy="4" r="2" stroke="#60a5fa" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-white font-semibold text-sm">LinkedIn</p>
+          <p class="text-slate-500 text-xs">Coming soon</p>
+        </div>
+        <span class="text-[10px] text-slate-600 font-bold uppercase tracking-wider border border-slate-700 rounded-full px-2 py-0.5">Soon</span>
+      </div>
+
+      <!-- Website ← PLACEHOLDER -->
+      <div class="link-btn placeholder rounded-2xl px-5 py-4 flex items-center gap-4 animate-fade-in-up s6"
+           title="Placeholder — add personal or business website">
+        <div class="w-10 h-10 rounded-xl bg-amber-400/15 border border-amber-400/20 flex items-center justify-center shrink-0">
+          <i data-lucide="globe" class="w-5 h-5 text-amber-400"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-white font-semibold text-sm">Website</p>
+          <p class="text-slate-500 text-xs">Coming soon</p>
+        </div>
+        <span class="text-[10px] text-slate-600 font-bold uppercase tracking-wider border border-slate-700 rounded-full px-2 py-0.5">Soon</span>
+      </div>
+
+      <!-- Company ← PLACEHOLDER -->
+      <div class="link-btn placeholder rounded-2xl px-5 py-4 flex items-center gap-4 animate-fade-in-up s7"
+           title="Placeholder — add company page">
+        <div class="w-10 h-10 rounded-xl bg-teal-400/15 border border-teal-400/20 flex items-center justify-center shrink-0">
+          <i data-lucide="building-2" class="w-5 h-5 text-teal-400"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-white font-semibold text-sm">Company</p>
+          <p class="text-slate-500 text-xs">Coming soon</p>
+        </div>
+        <span class="text-[10px] text-slate-600 font-bold uppercase tracking-wider border border-slate-700 rounded-full px-2 py-0.5">Soon</span>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         5. COPY LINK
+    ══════════════════════════════════════════════════════ -->
+    <div class="animate-fade-in-up s8">
+      <button
+        id="copyLinkBtn"
+        onclick="handleCopyLink()"
+        class="w-full glass rounded-2xl py-3.5 flex items-center justify-center gap-2.5 text-slate-400 text-sm font-semibold hover:text-white hover:border-white/15 transition-all duration-200"
+      >
+        <i data-lucide="link-2" id="copyIcon" class="w-4 h-4 shrink-0"></i>
+        <span id="copyLabel">Copy Profile Link</span>
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════
+         6. KARDEX BADGE
+    ══════════════════════════════════════════════════════ -->
+    <footer class="flex flex-col items-center gap-3 pt-2 animate-fade-in-up s9">
+      <div class="w-full h-px bg-gradient-to-r from-transparent via-white/8 to-transparent"></div>
+      <a href="https://kardex.io" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 group">
+        <div class="w-5 h-5 rounded-md bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-md shadow-teal-500/20">
+          <svg width="10" height="10" viewBox="0 0 16 16" fill="none">
+            <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white" opacity="0.9"/>
+            <rect x="9" y="1" width="6" height="6" rx="1.5" fill="white" opacity="0.6"/>
+            <rect x="1" y="9" width="6" height="6" rx="1.5" fill="white" opacity="0.6"/>
+            <rect x="9" y="9" width="6" height="6" rx="1.5" fill="white" opacity="0.9"/>
+          </svg>
+        </div>
+        <span class="text-slate-600 text-xs font-semibold tracking-wide group-hover:text-slate-400 transition-colors">
+          Powered by <span class="text-slate-400 group-hover:text-teal-400 transition-colors font-bold">KARDEX</span>
+        </span>
+        <i data-lucide="arrow-up-right" class="w-3 h-3 text-slate-700 group-hover:text-teal-400 transition-colors"></i>
+      </a>
+      <a href="https://kardex.io" target="_blank" rel="noopener noreferrer"
+         class="text-[11px] text-slate-700 hover:text-teal-400 transition-colors font-medium">
+        Get your own NFC card →
+      </a>
+    </footer>
+
+  </main>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+
+  // ── Save Contact (.vcf download) ─────────────────────────────
+  // DEV: Update ORG, EMAIL, ADR, and URL once Khalid provides them.
+  // Phone number is real and already populated.
+  function handleSaveContact() {
+    const vCard = [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      'FN:Khalid Doublali',
+      'N:Doublali;Khalid;;;',
+      'ORG:TBD',                                          // PLACEHOLDER
+      'TITLE:Businessman',
+      'TEL;TYPE=CELL:+905375861015',                      // REAL
+      'EMAIL:khalid@placeholder.com',                     // PLACEHOLDER
+      'URL:https://www.instagram.com/khalid.doublali/',   // REAL (Instagram for now)
+      'ADR;TYPE=WORK:;;Istanbul;;;; Turkey',              // PLACEHOLDER
+      'NOTE:Connected via Kardex NFC card — kardex.io',
+      'END:VCARD'
+    ].join('\n');
+
+    const blob = new Blob([vCard], { type: 'text/vcard;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'khalid-doublali.vcf';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    // Button feedback
+    const btn = document.getElementById('saveContactBtn');
+    btn.innerHTML = `
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      Contact Saved!
+    `;
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.innerHTML = '<i data-lucide="user-plus" class="w-5 h-5"></i> Save Contact';
+      btn.disabled  = false;
+      lucide.createIcons();
+    }, 3000);
+  }
+
+  // ── Copy profile link ─────────────────────────────────────────
+  function handleCopyLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      document.getElementById('copyLabel').textContent = 'Link Copied!';
+      document.getElementById('copyIcon').setAttribute('data-lucide', 'check');
+      lucide.createIcons();
+      setTimeout(() => {
+        document.getElementById('copyLabel').textContent = 'Copy Profile Link';
+        document.getElementById('copyIcon').set

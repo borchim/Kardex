@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>كارديكس — البطاقة الأخيرة التي ستحتاجها</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Cairo"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50:  '#f0fdf9', 100: '#ccfbef', 200: '#99f6e0', 300: '#5eead4',
+              400: '#2dd4bf', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e',
+              800: '#115e59', 900: '#134e4a',
+            },
+          },
+          animation: {
+            'ticker': 'ticker 28s linear infinite',
+            'fade-up': 'fadeUp 0.7s ease forwards',
+            'glow-pulse': 'glowPulse 3s ease-in-out infinite',
+          },
+          keyframes: {
+            ticker:    { '0%': { transform: 'translateX(0)' }, '100%': { transform: 'translateX(50%)' } },
+            fadeUp:    { '0%': { opacity: '0', transform: 'translateY(24px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+            glowPulse: { '0%, 100%': { opacity: '0.5', transform: 'scale(1)' }, '50%': { opacity: '0.8', transform: 'scale(1.05)' } },
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+    body { background-color: #020617; color: #e2e8f0; font-family: 'Cairo', sans-serif; overflow-x: hidden; }
+    .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.07); }
+    .glass-strong { background: rgba(255,255,255,0.055); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+    .orb { position: absolute; border-radius: 9999px; filter: blur(80px); pointer-events: none; z-index: 0; }
+    .gradient-text { background: linear-gradient(135deg, #5eead4 0%, #14b8a6 40%, #a78bfa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .gradient-text-white { background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #14b8a6, #0d9488); color: white; font-weight: 700; border-radius: 12px; transition: all 0.2s; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(20,184,166,0.35); }
+    .btn-secondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #94a3b8; font-weight: 600; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); transition: all 0.2s; }
+    .btn-secondary:hover { transform: translateY(-2px); color: white; border-color: rgba(255,255,255,0.25); }
+    .nav-blur { background: rgba(2,6,23,0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .ticker-track { display: flex; width: max-content; animation: ticker 28s linear infinite; }
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .shimmer-border { position: relative; }
+    .shimmer-border::before { content: ''; position: absolute; inset: -1px; border-radius: inherit; background: linear-gradient(135deg, #14b8a6, #6d28d9, #14b8a6); background-size: 200% 200%; animation: shimmerBorder 4s linear infinite; z-index: -1; }
+    @keyframes shimmerBorder { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    .faq-chevron { transition: transform 0.3s ease; }
+    .faq-chevron.open { transform: rotate(180deg); }
+    .nfc-card { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; position: relative; transition: transform 0.4s ease, box-shadow 0.4s ease; }
+    .nfc-card:hover { transform: rotateY(6deg) rotateX(3deg) translateY(-6px); box-shadow: 20px 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(20,184,166,0.1); }
+    .nfc-card::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%); pointer-events: none; }
+    .lang-active { color: #5eead4; font-weight: 700; }
+  </style>
+</head>
+
+<body>
+
+<nav class="nav-blur fixed top-0 left-0 right-0 z-50 py-4 px-6 lg:px-12">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+
+    <a href="#" class="flex items-center gap-2 group">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-lg shadow-teal-500/30">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white" opacity="0.9"/>
+          <rect x="9" y="1" width="6" height="6" rx="1.5" fill="white" opacity="0.6"/>
+          <rect x="1" y="9" width="6" height="6" rx="1.5" fill="white" opacity="0.6"/>
+          <rect x="9" y="9" width="6" height="6" rx="1.5" fill="white" opacity="0.9"/>
+        </svg>
+      </div>
+      <span class="text-white font-bold text-xl tracking-tight">Kardex</span>
+    </a>
+
+    <div class="hidden md:flex items-center gap-8 text-sm text-slate-400 font-medium">
+      <a href="#how-it-works" class="hover:text-white transition-colors">كيف يعمل</a>
+      <a href="#features"     class="hover:text-white transition-colors">المميزات</a>
+      <a href="#pricing"      class="hover:text-white transition-colors">الأسعار</a>
+      <a href="#faq"          class="hover:text-white transition-colors">الأسئلة الشائعة</a>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <!-- Language Switcher -->
+      <div class="hidden sm:flex items-center gap-1 text-xs font-semibold text-slate-500">
+        <a href="/" class="hover:text-white transition-colors px-1.5 py-0.5 rounded">EN</a>
+        <span class="text-white/20">|</span>
+        <a href="/ar.html" class="lang-active px-1.5 py-0.5 rounded">عربي</a>
+        <span class="text-white/20">|</span>
+        <a href="/tr.html" class="hover:text-white transition-colors px-1.5 py-0.5 rounded">TR</a>
+      </div>
+      <a href="#pricing" class="btn-primary px-5 py-2.5 text-sm hidden sm:inline-flex">ابدأ الآن →</a>
+    </div>
+
+  </div>
+</nav>
+
+
+<!-- HERO -->
+<section id="hero" class="relative min-h-screen flex items-center justify-center px-6 pt-24 pb-16 overflow-hidden">
+  <div class="orb w-[600px] h-[600px] bg-teal-500/10 top-[-100px] right-[-200px] animate-glow-pulse"></div>
+  <div class="orb w-[500px] h-[500px] bg-violet-600/10 bottom-[-50px] left-[-150px] animate-glow-pulse" style="animation-delay:1.5s"></div>
+  <div class="orb w-[300px] h-[300px] bg-teal-400/8 top-[40%] left-[50%] translate-x-[-50%]"></div>
+
+  <div class="relative z-10 max-w-5xl mx-auto text-center">
+
+    <div class="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 text-xs font-semibold text-teal-300 mb-6 reveal">
+      <span class="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></span>
+      مدعوم بـ NFC · تحديثات فورية · صفر هدر للورق
+    </div>
+
+    <h1 class="text-5xl sm:text-6xl lg:text-8xl font-black leading-[0.95] tracking-tight mb-6 reveal" style="animation-delay:0.1s">
+      <span class="gradient-text-white">البطاقات الورقية</span><br/>
+      <span class="gradient-text">انتهت رسمياً.</span>
+    </h1>
+
+    <p class="text-slate-400 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed mb-10 reveal" style="animation-delay:0.2s">
+      لمسة واحدة. كل التفاصيل. كارديكس يحوّل بطاقة واحدة أنيقة إلى هوية رقمية حية — لا يحتاج تطبيقاً.
+    </p>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 reveal" style="animation-delay:0.3s">
+      <a href="#pricing" class="btn-primary px-8 py-4 text-base w-full sm:w-auto text-center">اشترِ البطاقات — 29.99$</a>
+      <a href="#" class="btn-secondary px-8 py-4 text-base w-full sm:w-auto text-center">أنشئ ملفاً مجانياً ↗</a>
+    </div>
+
+    <div class="mt-16 sm:mt-20 reveal" style="animation-delay:0.45s">
+      <div class="relative inline-block">
+        <div class="absolute inset-[-20%] bg-teal-500/10 rounded-full blur-3xl animate-glow-pulse"></div>
+        <div class="nfc-card w-80 sm:w-96 h-52 sm:h-56 mx-auto p-7 cursor-pointer select-none">
+          <div class="relative z-10 h-full flex flex-col justify-between">
+            <div class="flex items-start justify-between">
+              <div class="w-10 h-10 rounded-full border border-teal-400/40 flex items-center justify-center">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" stroke-width="2">
+                  <path d="M12 20.5C7.3 20.5 3.5 16.7 3.5 12S7.3 3.5 12 3.5 20.5 7.3 20.5 12"/>
+                  <path d="M12 16.5c-2.5 0-4.5-2-4.5-4.5S9.5 7.5 12 7.5"/>
+                  <path d="M12 12.5c-.3 0-.5-.2-.5-.5s.2-.5.5-.5.5.2.5.5-.2.5-.5.5z" fill="#14b8a6"/>
+                </svg>
+              </div>
+              <div class="text-right">
+                <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1">هوية رقمية</p>
+                <p class="text-white font-bold text-lg">أليكس مورغان</p>
+                <p class="text-teal-400 text-sm font-medium">المؤسس المشارك والرئيس التنفيذي</p>
+              </div>
+            </div>
+            <div class="flex items-end justify-between">
+              <span class="text-slate-600 font-bold text-sm tracking-wider">KARDEX</span>
+              <div class="flex flex-col gap-1 items-end">
+                <div class="flex items-center gap-2">
+                  <span class="text-slate-400 text-xs">kardex.io/alexmorgan</span>
+                  <div class="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 20px 20px;"></div>
+        </div>
+        <div class="absolute -top-4 -left-8 glass-strong rounded-xl px-4 py-2.5 text-xs font-semibold hidden sm:block animate-bounce" style="animation-duration:3s">
+          <span class="text-teal-400">⚡ 0.3 ث</span>
+          <span class="text-slate-400 mr-1">لمس إلى ملف</span>
+        </div>
+        <div class="absolute -bottom-4 -right-10 glass-strong rounded-xl px-4 py-2.5 text-xs font-semibold hidden sm:block" style="animation: fadeUp 1s ease 0.8s both">
+          <span class="text-violet-400">📊 247</span>
+          <span class="text-slate-400 mr-1">مشاهدة هذا الأسبوع</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- SOCIAL PROOF -->
+<section class="py-8 border-y border-white/5 overflow-hidden bg-white/[0.015]">
+  <div class="flex items-center gap-4 mb-3 px-6 max-w-7xl mx-auto">
+    <div class="h-px flex-1 bg-white/5"></div>
+    <p class="text-slate-500 text-xs font-semibold uppercase tracking-widest whitespace-nowrap">يثق به أكثر من 1,000 محترف</p>
+  </div>
+  <div class="relative overflow-hidden">
+    <div class="absolute left-0 top-0 bottom-0 w-24 z-10" style="background: linear-gradient(90deg, #020617, transparent)"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-24 z-10" style="background: linear-gradient(-90deg, #020617, transparent)"></div>
+    <div class="ticker-track">
+      <div class="flex items-center gap-10 px-5">
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🏢</span> Stripe</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🚀</span> Notion</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">💼</span> Figma</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">📊</span> Airtable</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">⚡</span> Vercel</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🌐</span> Linear</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🎯</span> Loom</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🔮</span> Prismic</span>
+        <span class="w-px h-4 bg-white/10"></span>
+        <span class="text-teal-400 text-xs font-bold uppercase tracking-widest whitespace-nowrap">★ 4.9/5 من أكثر من 820 تقييم</span>
+        <span class="w-px h-4 bg-white/10"></span>
+      </div>
+      <div class="flex items-center gap-10 px-5" aria-hidden="true">
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🏢</span> Stripe</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🚀</span> Notion</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">💼</span> Figma</span>
+        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">📊</span> Airtable</span>
+        <span class="w-px h-4 bg-white/10"></span>
+        <span class="text-teal-400 text-xs font-bold uppercase tracking-widest whitespace-nowrap">★ 4.9/5 من أكثر من 820 تقييم</span>
+        <span class="w-px h-4 bg-white/10"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works" class="py-24 px-6 relative overflow-hidden">
+  <div class="orb w-[500px] h-[500px] bg-violet-600/8 top-0 left-[-100px]"></div>
+  <div class="max-w-6xl mx-auto relative z-10">
+    <div class="text-center mb-16 reveal">
+      <p class="text-teal-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">كيف يعمل</p>
+      <h2 class="text-4xl sm:text-5xl font-black gradient-text-white mb-4">بسيط جداً.<br/>فعّال بشكل لافت.</h2>
+      <p class="text-slate-500 max-w-md mx-auto">ثلاث خطوات من الصندوق إلى التواصل. لا تعقيدات.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6 lg:gap-8">
+
+      <div class="glass rounded-2xl p-8 relative reveal group hover:border-teal-500/30 transition-all duration-300">
+        <div class="absolute -top-4 right-8 w-8 h-8 rounded-full bg-teal-500/20 border border-teal-400/40 flex items-center justify-center text-teal-400 text-xs font-bold">1</div>
+        <div class="w-14 h-14 rounded-2xl bg-teal-500/10 border border-teal-400/20 flex items-center justify-center mb-6">
+          <i data-lucide="pen-tool" class="w-6 h-6 text-teal-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-xl mb-3">صمّم ملفك الشخصي</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">صمّم هويتك الرقمية في دقائق. أضف الروابط والشبكات الاجتماعية والصور والسيرة الذاتية — وعدّل كل شيء متى شئت.</p>
+        <div class="mt-6 glass rounded-xl p-4 text-xs space-y-2">
+          <div class="flex items-center gap-2">
+            <div class="w-6 h-6 rounded-full bg-teal-400/20"></div>
+            <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+              <div class="h-full w-3/4 bg-teal-400/50 rounded-full"></div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <div class="h-1.5 w-12 bg-white/8 rounded-full"></div>
+            <div class="h-1.5 w-16 bg-white/8 rounded-full"></div>
+            <div class="h-1.5 w-10 bg-teal-400/30 rounded-full"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-8 relative reveal group hover:border-violet-500/30 transition-all duration-300" style="transition-delay:0.1s">
+        <div class="absolute -top-4 right-8 w-8 h-8 rounded-full bg-violet-500/20 border border-violet-400/40 flex items-center justify-center text-violet-400 text-xs font-bold">2</div>
+        <div class="w-14 h-14 rounded-2xl bg-violet-500/10 border border-violet-400/20 flex items-center justify-center mb-6">
+          <i data-lucide="wifi" class="w-6 h-6 text-violet-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-xl mb-3">اضغط للمشاركة</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">ضع كارديكس بالقرب من أي هاتف ذكي حديث. تقنية NFC تتولى الباقي — لا تطبيقات، لا مسح QR، لا عوائق.</p>
+        <div class="mt-6 flex items-center justify-center gap-4">
+          <div class="w-10 h-6 rounded-md bg-teal-400/10 border border-teal-400/30 flex items-center justify-center">
+            <span class="text-teal-400 text-[8px] font-bold">NFC</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-1.5 h-1.5 rounded-full bg-violet-400 animate-ping"></div>
+            <div class="w-1 h-1 rounded-full bg-violet-400/60 animate-ping" style="animation-delay:0.2s"></div>
+            <div class="w-0.5 h-0.5 rounded-full bg-violet-400/30 animate-ping" style="animation-delay:0.4s"></div>
+          </div>
+          <div class="w-10 h-16 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center">
+            <i data-lucide="smartphone" class="w-5 h-5 text-slate-500"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-8 relative reveal group hover:border-blue-500/30 transition-all duration-300" style="transition-delay:0.2s">
+        <div class="absolute -top-4 right-8 w-8 h-8 rounded-full bg-blue-500/20 border border-blue-400/40 flex items-center justify-center text-blue-400 text-xs font-bold">3</div>
+        <div class="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-400/20 flex items-center justify-center mb-6">
+          <i data-lucide="users" class="w-6 h-6 text-blue-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-xl mb-3">شاهد التواصل يحدث</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">يرون ملفك الكامل فوراً. لمسة واحدة لحفظ جهة الاتصال أو متابعة LinkedIn أو حجز اجتماع. تم.</p>
+        <div class="mt-6 glass rounded-xl p-4 text-xs space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-green-400 font-semibold">+1 اليوم</span>
+            <span class="text-slate-500">تواصل جديد</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-blue-400 font-semibold">منذ 3 ثوانٍ</span>
+            <span class="text-slate-500">نقر على LinkedIn</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- FEATURES -->
+<section id="features" class="py-24 px-6 relative overflow-hidden">
+  <div class="orb w-[600px] h-[600px] bg-teal-500/6 bottom-0 right-[-200px]"></div>
+  <div class="max-w-6xl mx-auto relative z-10">
+    <div class="text-center mb-16 reveal">
+      <p class="text-teal-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">لماذا كارديكس</p>
+      <h2 class="text-4xl sm:text-5xl font-black gradient-text-white mb-4">مصمم للطريقة<br/>التي تعمل بها فعلاً.</h2>
+      <p class="text-slate-500 max-w-md mx-auto">كل ما تحتاجه. لا شيء زائد.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <div class="glass rounded-2xl p-7 reveal group hover:border-teal-400/20 transition-all duration-300 col-span-1 sm:col-span-2 lg:col-span-1">
+        <div class="w-12 h-12 rounded-xl bg-teal-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+          <i data-lucide="zap" class="w-5 h-5 text-teal-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-lg mb-2">سرعة NFC</h3>
+        <p class="text-slate-400 text-sm leading-relaxed mb-5">أقل من 0.3 ثانية من اللمس إلى الملف الشخصي. لا دوارات تحميل. لا اتصالات ضائعة.</p>
+        <div class="space-y-2">
+          <div class="flex justify-between text-xs text-slate-500 mb-1">
+            <span class="text-teal-400 font-semibold">0.3 ث</span>
+            <span>Kardex NFC</span>
+          </div>
+          <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-teal-400 to-teal-500 rounded-full" style="width:95%"></div></div>
+          <div class="flex justify-between text-xs text-slate-500 mb-1">
+            <span class="text-slate-600">4.2 ث</span>
+            <span>مسح QR</span>
+          </div>
+          <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-slate-700 rounded-full" style="width:28%"></div></div>
+          <div class="flex justify-between text-xs text-slate-500 mb-1">
+            <span class="text-slate-600">ضاع للأبد</span>
+            <span>بطاقة ورقية</span>
+          </div>
+          <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-slate-800 rounded-full" style="width:5%"></div></div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-7 reveal group hover:border-violet-400/20 transition-all duration-300" style="transition-delay:0.1s">
+        <div class="w-12 h-12 rounded-xl bg-violet-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+          <i data-lucide="refresh-cw" class="w-5 h-5 text-violet-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-lg mb-2">تحديثات ديناميكية</h3>
+        <p class="text-slate-400 text-sm leading-relaxed mb-5">غيّر مسمى وظيفتك، انتقل لشركة جديدة، أضف رابطاً — حدّث مرة واحدة، ويظهر في كل مكان. بطاقتك لا تتقادم أبداً.</p>
+        <div class="glass rounded-xl p-3 text-xs space-y-2">
+          <div class="flex items-center gap-2 text-slate-400">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-teal-400"></i>
+            الدور الجديد محدّث — مباشرةً
+          </div>
+          <div class="flex items-center gap-2 text-slate-400">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-teal-400"></i>
+            تمت إضافة رابط المحفظة الجديد
+          </div>
+          <div class="flex items-center gap-2 text-slate-400">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-teal-400"></i>
+            0 طبعات جديدة مطلوبة
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-7 reveal group hover:border-blue-400/20 transition-all duration-300" style="transition-delay:0.15s">
+        <div class="w-12 h-12 rounded-xl bg-blue-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+          <i data-lucide="bar-chart-2" class="w-5 h-5 text-blue-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-lg mb-2">لوحة التحليلات</h3>
+        <p class="text-slate-400 text-sm leading-relaxed mb-5">اعرف تماماً من لمس بطاقتك، متى، وما الذي نقر عليه. حوّل كل تفاعل إلى رؤية.</p>
+        <div class="flex items-end gap-1.5 h-12">
+          <div class="flex-1 rounded-t bg-blue-400/20" style="height:40%"></div>
+          <div class="flex-1 rounded-t bg-blue-400/30" style="height:60%"></div>
+          <div class="flex-1 rounded-t bg-blue-400/40" style="height:50%"></div>
+          <div class="flex-1 rounded-t bg-blue-400/50" style="height:80%"></div>
+          <div class="flex-1 rounded-t bg-blue-400/60" style="height:65%"></div>
+          <div class="flex-1 rounded-t bg-blue-400/70" style="height:90%"></div>
+          <div class="flex-1 rounded-t bg-blue-400"    style="height:100%"></div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-7 reveal group hover:border-amber-400/20 transition-all duration-300" style="transition-delay:0.2s">
+        <div class="w-12 h-12 rounded-xl bg-amber-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+          <i data-lucide="smartphone" class="w-5 h-5 text-amber-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-lg mb-2">لا يحتاج تطبيقاً</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">يعمل على كل آيفون وأندرويد حديث تلقائياً. لا يحتاجون تثبيت أي شيء — أبداً.</p>
+      </div>
+
+      <div class="glass rounded-2xl p-7 reveal group hover:border-green-400/20 transition-all duration-300" style="transition-delay:0.25s">
+        <div class="w-12 h-12 rounded-xl bg-green-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+          <i data-lucide="leaf" class="w-5 h-5 text-green-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-lg mb-2">صفر هدر للورق</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">يستهلك المحترف العادي أكثر من 250 بطاقة ورقية سنوياً. كارديكس يحلّ محلها جميعاً — للأبد.</p>
+      </div>
+
+      <div class="glass rounded-2xl p-7 reveal group hover:border-rose-400/20 transition-all duration-300" style="transition-delay:0.3s">
+        <div class="w-12 h-12 rounded-xl bg-rose-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+          <i data-lucide="layers" class="w-5 h-5 text-rose-400"></i>
+        </div>
+        <h3 class="text-white font-bold text-lg mb-2">أوضاع متعددة للملف</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">تنقّل بين الملف المهني والشخصي ومشاريعك الجانبية بلمسة واحدة في التطبيق. بطاقة واحدة، هويات كثيرة.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- PRICING -->
+<section id="pricing" class="py-24 px-6 relative overflow-hidden">
+  <div class="orb w-[500px] h-[500px] bg-teal-400/8 top-[-100px] left-[50%] translate-x-[-50%]"></div>
+  <div class="max-w-5xl mx-auto relative z-10">
+    <div class="text-center mb-16 reveal">
+      <p class="text-teal-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">احصل على بطاقتك</p>
+      <h2 class="text-4xl sm:text-5xl font-black gradient-text-white mb-4">بطاقة واحدة. قيمة لا تنتهي.</h2>
+      <p class="text-slate-500 max-w-md mx-auto">لا اشتراكات. لا مفاجآت. ادفع مرة واحدة — استخدمها للأبد.</p>
+    </div>
+    <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+
+      <div class="glass rounded-2xl p-8 reveal flex flex-col">
+        <div class="mb-6">
+          <p class="text-slate-400 text-sm font-semibold uppercase tracking-widest mb-2">ملف مجاني</p>
+          <div class="flex items-end gap-1.5 mb-2">
+            <span class="text-white font-black text-5xl">$0</span>
+          </div>
+          <p class="text-slate-500 text-sm">حضورك الرقمي على الإنترنت.</p>
+        </div>
+        <ul class="space-y-3 flex-1 mb-8">
+          <li class="flex items-center gap-3 text-sm text-slate-400"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> رابط ملف مخصص على kardex.io</li>
+          <li class="flex items-center gap-3 text-sm text-slate-400"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> حتى 5 روابط</li>
+          <li class="flex items-center gap-3 text-sm text-slate-400"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> تحليلات أساسية (مشاهدات فقط)</li>
+          <li class="flex items-center gap-3 text-sm text-slate-400"><i data-lucide="x" class="w-4 h-4 text-slate-600 shrink-0"></i> <span class="text-slate-600">لا بطاقة NFC مادية</span></li>
+        </ul>
+        <a href="#" class="btn-secondary text-center py-3.5 text-sm rounded-xl block">أنشئ ملفاً مجانياً</a>
+      </div>
+
+      <div class="shimmer-border rounded-2xl reveal" style="transition-delay:0.15s">
+        <div class="glass-strong rounded-2xl p-8 flex flex-col relative overflow-hidden h-full">
+          <div class="absolute top-5 left-5 bg-teal-400/10 border border-teal-400/30 text-teal-400 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">الأكثر مبيعاً</div>
+          <div class="mb-6">
+            <p class="text-teal-400 text-sm font-semibold uppercase tracking-widest mb-2">بطاقة NFC مات أسود</p>
+            <div class="flex items-end gap-1.5 mb-2">
+              <span class="text-white font-black text-5xl">$29</span>
+              <span class="text-white text-xl font-bold mb-1">.99</span>
+            </div>
+            <p class="text-slate-400 text-sm">دفعة واحدة. تحديثات مدى الحياة.</p>
+          </div>
+          <div class="nfc-card rounded-xl h-24 mb-6 flex items-center justify-center relative overflow-hidden">
+            <div class="relative z-10 flex items-center gap-3">
+              <div class="text-slate-600">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M12 20.5C7.3 20.5 3.5 16.7 3.5 12S7.3 3.5 12 3.5 20.5 7.3 20.5 12"/>
+                  <path d="M12 16.5c-2.5 0-4.5-2-4.5-4.5S9.5 7.5 12 7.5"/>
+                </svg>
+              </div>
+              <span class="text-white font-bold text-lg tracking-widest">KARDEX</span>
+            </div>
+            <div class="absolute bottom-2 left-3 text-[9px] text-slate-700 font-medium tracking-widest">BLACK MATTE · NFC</div>
+          </div>
+          <ul class="space-y-3 flex-1 mb-8">
+            <li class="flex items-center gap-3 text-sm text-slate-300"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> بطاقة NFC مات أسود فاخرة</li>
+            <li class="flex items-center gap-3 text-sm text-slate-300"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> روابط وملفات غير محدودة</li>
+            <li class="flex items-center gap-3 text-sm text-slate-300"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> لوحة تحليلات كاملة</li>
+            <li class="flex items-center gap-3 text-sm text-slate-300"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> تحديثات الرابط الديناميكي دائماً</li>
+            <li class="flex items-center gap-3 text-sm text-slate-300"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> التبديل بين ملفات متعددة</li>
+            <li class="flex items-center gap-3 text-sm text-slate-300"><i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> دعم أولوي</li>
+          </ul>
+          <a href="#" class="btn-primary text-center py-4 text-sm rounded-xl block">اشترِ البطاقات — 29.99$ →</a>
+          <p class="text-center text-slate-600 text-xs mt-3">شحن مجاني · يُشحن خلال 3-5 أيام</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- TESTIMONIALS -->
+<section class="py-16 px-6 border-y border-white/5 bg-white/[0.01]">
+  <div class="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
+
+    <div class="glass rounded-2xl p-7 reveal">
+      <div class="flex gap-1 mb-4"><span class="text-teal-400 text-sm">★★★★★</span></div>
+      <p class="text-slate-300 text-sm leading-relaxed mb-5">"سلّمت كارديكس في مؤتمر. وجه الشخص حين فتح هاتفه مباشرةً على ملفي — لا يُقدَّر بثمن. طلبت 3 بطاقات إضافية لفريقي."</p>
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-teal-400 to-violet-500 flex items-center justify-center text-white text-xs font-bold">JK</div>
+        <div>
+          <p class="text-white text-sm font-semibold">جيمي ك.</p>
+          <p class="text-slate-500 text-xs">مؤسس، Elevate Labs</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass rounded-2xl p-7 reveal" style="transition-delay:0.1s">
+      <div class="flex gap-1 mb-4"><span class="text-teal-400 text-sm">★★★★★</span></div>
+      <p class="text-slate-300 text-sm leading-relaxed mb-5">"غيّرت وظيفتي 3 مرات العام الماضي. لا طباعة جديدة. فقط حدّثت ملفي وكل بطاقة أعطيتها عكست التغيير تلقائياً."</p>
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-teal-400 flex items-center justify-center text-white text-xs font-bold">SC</div>
+        <div>
+          <p class="text-white text-sm font-semibold">صوفيا ك.</p>
+          <p class="text-slate-500 text-xs">رئيسة المبيعات، Revelo</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass rounded-2xl p-7 reveal" style="transition-delay:0.2s">
+      <div class="flex gap-1 mb-4"><span class="text-teal-400 text-sm">★★★★★</span></div>
+      <p class="text-slate-300 text-sm leading-relaxed mb-5">"لوحة التحليلات غيّرت قواعد اللعبة. أرى بالضبط أي الروابط ينقر عليها الناس بعد لقائي. مثل CRM للتواصل الشبكي."</p>
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-violet-400 to-rose-400 flex items-center justify-center text-white text-xs font-bold">ML</div>
+        <div>
+          <p class="text-white text-sm font-semibold">ماركوس ل.</p>
+          <p class="text-slate-500 text-xs">شريك مغامر، Northbridge</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- FAQ -->
+<section id="faq" class="py-24 px-6 relative overflow-hidden">
+  <div class="orb w-[400px] h-[400px] bg-violet-600/8 bottom-0 left-[-100px]"></div>
+  <div class="max-w-3xl mx-auto relative z-10">
+    <div class="text-center mb-12 reveal">
+      <p class="text-teal-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">الأسئلة الشائعة</p>
+      <h2 class="text-4xl sm:text-5xl font-black gradient-text-white mb-4">لديك أسئلة؟</h2>
+      <p class="text-slate-500">لدينا إجابات واضحة.</p>
+    </div>
+    <div class="space-y-3">
+
+      <div class="glass rounded-2xl overflow-hidden reveal" x-data="{ open: false }">
+        <button @click="open = !open" class="w-full flex items-center justify-between px-7 py-5 text-right group">
+          <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0 faq-chevron" :class="{ 'open': open }"></i>
+          <span class="text-white font-semibold text-sm sm:text-base">هل يحتاج المستلم لتثبيت تطبيق؟</span>
+        </button>
+        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2">
+          <div class="px-7 pb-6 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4 text-right">
+            لا يحتاج أي طرف إلى تطبيق. عندما يلمس شخص ما كارديكس، يفتح هاتفه ملفك في المتصفح فوراً. يعمل على أي آيفون (iOS 11+) أو أندرويد (6.0+).
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl overflow-hidden reveal" x-data="{ open: false }">
+        <button @click="open = !open" class="w-full flex items-center justify-between px-7 py-5 text-right group">
+          <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0 faq-chevron" :class="{ 'open': open }"></i>
+          <span class="text-white font-semibold text-sm sm:text-base">ماذا لو غيّرت وظيفتي أو بياناتي؟</span>
+        </button>
+        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2">
+          <div class="px-7 pb-6 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4 text-right">
+            هذا هو السحر. حدّث ملف كارديكس مرة واحدة في لوحة التحكم وكل بطاقة أعطيتها — سابقاً وحالياً — ستعكس بياناتك الجديدة في المرة القادمة التي تُلمس فيها. لا طباعة مرة أخرى أبداً.
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl overflow-hidden reveal" x-data="{ open: false }">
+        <button @click="open = !open" class="w-full flex items-center justify-between px-7 py-5 text-right group">
+          <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0 faq-chevron" :class="{ 'open': open }"></i>
+          <span class="text-white font-semibold text-sm sm:text-base">هل بياناتي خاصة وآمنة؟</span>
+        </button>
+        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2">
+          <div class="px-7 pb-6 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4 text-right">
+            بالتأكيد. أنت تتحكم بما هو مرئي على ملفك. بيانات التحليلات مجهولة الهوية. لا نبيع بياناتك أبداً. رابط ملفك الشخصي قابل للوصول علناً فقط إذا اخترت مشاركته.
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl overflow-hidden reveal" x-data="{ open: false }">
+        <button @click="open = !open" class="w-full flex items-center justify-between px-7 py-5 text-right group">
+          <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0 faq-chevron" :class="{ 'open': open }"></i>
+          <span class="text-white font-semibold text-sm sm:text-base">ما مدى متانة البطاقة؟</span>
+        </button>
+        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2">
+          <div class="px-7 pb-6 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4 text-right">
+            بطاقات كارديكس مصنوعة من PVC عالي الجودة بطلاء مات أسود — نفس مادة بطاقات الائتمان الفاخرة. مقاومة للماء والخدوش، ومصممة لتعيش في محفظتك لسنوات. شريحة NFC مصنفة لأكثر من 100,000 لمسة.
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl overflow-hidden reveal" x-data="{ open: false }">
+        <button @click="open = !open" class="w-full flex items-center justify-between px-7 py-5 text-right group">
+          <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0 faq-chevron" :class="{ 'open': open }"></i>
+          <span class="text-white font-semibold text-sm sm:text-base">هل يمكنني استخدام كارديكس لفريقي بأكمله؟</span>
+        </button>
+        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2">
+          <div class="px-7 pb-6 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4 text-right">
+            نعم. نقدم طلبات بالجملة مع علامة تجارية مخصصة لفرق من أي حجم. تواصل مع <span class="text-teal-400">teams@kardex.io</span> للأسعار الجماعية والتأهيل الفردي.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- FINAL CTA -->
+<section class="py-28 px-6 relative overflow-hidden">
+  <div class="orb w-[700px] h-[700px] bg-teal-500/10 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] animate-glow-pulse"></div>
+  <div class="max-w-3xl mx-auto text-center relative z-10">
+    <div class="reveal">
+      <p class="text-teal-400 text-xs font-bold uppercase tracking-[0.2em] mb-4">آخر انطباع أول</p>
+      <h2 class="text-5xl sm:text-6xl lg:text-7xl font-black gradient-text-white leading-tight mb-6">
+        توقف عن توزيع<br/>
+        <span class="gradient-text">البطاقات الميتة.</span>
+      </h2>
+      <p class="text-slate-400 text-lg max-w-xl mx-auto mb-10">
+        انضم إلى أكثر من 1,000 محترف انتقلوا بالفعل. شراء واحد. تواصل لا ينتهي.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="#pricing" class="btn-primary px-10 py-4 text-base w-full sm:w-auto text-center">احصل على كارديكس — 29.99$</a>
+        <a href="#" class="btn-secondary px-10 py-4 text-base w-full sm:w-auto text-center">أنشئ ملفاً مجانياً</a>
+      </div>
+      <p class="text-slate-600 text-xs mt-5">شحن مجاني عالمياً · ضمان رضا 30 يوماً</p>
+    </div>
+  </div>
+</section>
+
+<footer class="border-t border-white/5 py-10 px-6">
+  <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-slate-600 text-xs">
+    <div class="flex items-center gap-6">
+      <a href="#" class="hover:text-slate-400 transition-colors">انستغرام</a>
+      <a href="#" class="hover:text-slate-400 transition-colors">تويتر</a>
+      <a href="#" class="hover:text-slate-400 transition-colors">اتصل بنا</a>
+      <a href="#" class="hover:text-slate-400 transition-colors">الشروط</a>
+      <a href="#" class="hover:text-slate-400 transition-colors">الخصوصية</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <span>© 2025 · جميع الحقوق محفوظة ·</span>
+      <span class="text-slate-400 font-semibold">Kardex</span>
+      <div class="w-6 h-6 rounded-md bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white" opacity="0.9"/>
+          <rect x="9" y="1" width="6" height="6" rx="1.5" fill="white" opacity="0.6"/>
+          <rect x="1" y="9" width="6" height="6" rx="1.5" fill="white" opacity="0.6"/>
+          <rect x="9" y="9" width="6" height="6" rx="1.5" fill="white" opacity="0.9"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+    const revealObserver = new IntersectionObserver(
+      (entries) => { entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add('visible'); revealObserver.unobserve(entry.target); } }); },
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    );
+    document.querySelectorAll('.reveal').forEach((el) => { revealObserver.observe(el); });
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener('click', (e) => {
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+    });
+    setTimeout(() => lucide.createIcons(), 300);
+  });
+</script>
+
+</body>
+</html>

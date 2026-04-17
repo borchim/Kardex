@@ -5,20 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kardex — The Last Card You'll Ever Need</title>
 
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Alpine.js CDN (for accordion/interactive elements) -->
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-  <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-
   <!-- Plus Jakarta Sans font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
+  <!-- Tailwind config MUST be set before the CDN script loads -->
   <script>
     // Tailwind config extensions
     tailwind.config = {
@@ -64,6 +56,15 @@
       },
     }
   </script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Alpine.js CDN (for accordion/interactive elements) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Lucide Icons CDN -->
+  <script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
   <style>
     /* ─── Global base ─────────────────────────────────────────── */
@@ -223,7 +224,7 @@
       content: '';
       position: fixed;
       inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
       pointer-events: none;
       z-index: 9999;
       opacity: 0.35;
@@ -1005,17 +1006,13 @@
      SCRIPTS
 ═══════════════════════════════════════════════════════════ -->
 <script>
-  // Initialize Lucide icons after DOM is ready
+  // ── Scroll-reveal observer (runs as soon as DOM is ready) ─────────────
   document.addEventListener('DOMContentLoaded', () => {
-    lucide.createIcons();
-
-    // ── Scroll-reveal observer ─────────────────────────────
     const revealObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible');
-            // Optionally unobserve after first reveal for performance
             revealObserver.unobserve(entry.target);
           }
         });
@@ -1037,9 +1034,15 @@
         }
       });
     });
+  });
 
-    // ── Re-init lucide icons after Alpine renders (for dynamic content) ──
-    setTimeout(() => lucide.createIcons(), 300);
+  // ── Initialize Lucide icons once the deferred script has loaded ───────
+  window.addEventListener('load', () => {
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+      // Re-init after Alpine has had a chance to render dynamic content
+      setTimeout(() => lucide.createIcons(), 300);
+    }
   });
 </script>
 

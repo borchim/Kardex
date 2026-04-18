@@ -1,1101 +1,1103 @@
-<!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kardex — The Last Card You'll Ever Need</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Kardex — The digital business card, reimagined</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #FAF7F2; color: #0F1A2E; font-family: 'Inter', system-ui, sans-serif; }
+  html { scroll-behavior: smooth; }
+  ::selection { background: #C9A24A; color: #0F1A2E; }
+  a { color: inherit; }
 
-  <!-- Plus Jakarta Sans font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-
-  <!-- Tailwind config MUST be set before the CDN script loads -->
-  <script>
-    // Tailwind config extensions
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-          },
-          colors: {
-            brand: {
-              50:  '#f0fdf9',
-              100: '#ccfbef',
-              200: '#99f6e0',
-              300: '#5eead4',
-              400: '#2dd4bf',
-              500: '#14b8a6',
-              600: '#0d9488',
-              700: '#0f766e',
-              800: '#115e59',
-              900: '#134e4a',
-            },
-          },
-          animation: {
-            'ticker': 'ticker 28s linear infinite',
-            'fade-up': 'fadeUp 0.7s ease forwards',
-            'glow-pulse': 'glowPulse 3s ease-in-out infinite',
-          },
-          keyframes: {
-            ticker: {
-              '0%':   { transform: 'translateX(0)' },
-              '100%': { transform: 'translateX(-50%)' },
-            },
-            fadeUp: {
-              '0%':   { opacity: '0', transform: 'translateY(24px)' },
-              '100%': { opacity: '1', transform: 'translateY(0)' },
-            },
-            glowPulse: {
-              '0%, 100%': { opacity: '0.5', transform: 'scale(1)' },
-              '50%':      { opacity: '0.8', transform: 'scale(1.05)' },
-            },
-          },
-        },
-      },
-    }
-  </script>
-
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Alpine.js CDN (for accordion/interactive elements) -->
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-  <!-- Lucide Icons CDN -->
-  <script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-
-  <style>
-    /* ─── Global base ─────────────────────────────────────────── */
-    * { box-sizing: border-box; }
-
-    body {
-      background-color: #020617;
-      color: #e2e8f0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      overflow-x: hidden;
-    }
-
-    /* ─── Glassmorphism utility ───────────────────────────────── */
-    .glass {
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.07);
-    }
-
-    .glass-strong {
-      background: rgba(255, 255, 255, 0.055);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    /* ─── Glow orbs ───────────────────────────────────────────── */
-    .orb {
-      position: absolute;
-      border-radius: 9999px;
-      filter: blur(80px);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* ─── Gradient text ───────────────────────────────────────── */
-    .gradient-text {
-      background: linear-gradient(135deg, #5eead4 0%, #14b8a6 40%, #a78bfa 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .gradient-text-white {
-      background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    /* ─── CTA Buttons ─────────────────────────────────────────── */
-    .btn-primary {
-      background: linear-gradient(135deg, #14b8a6, #0d9488);
-      color: #fff;
-      font-weight: 700;
-      border-radius: 9999px;
-      transition: all 0.25s ease;
-      box-shadow: 0 0 24px rgba(20, 184, 166, 0.35);
-    }
-    .btn-primary:hover {
-      box-shadow: 0 0 40px rgba(20, 184, 166, 0.55);
-      transform: translateY(-2px);
-    }
-
-    .btn-secondary {
-      border: 1px solid rgba(255,255,255,0.18);
-      color: #e2e8f0;
-      font-weight: 600;
-      border-radius: 9999px;
-      transition: all 0.25s ease;
-      background: transparent;
-    }
-    .btn-secondary:hover {
-      background: rgba(255,255,255,0.07);
-      border-color: rgba(255,255,255,0.3);
-      transform: translateY(-2px);
-    }
-
-    /* ─── Ticker / marquee ────────────────────────────────────── */
-    .ticker-track {
-      display: flex;
-      width: max-content;
-      animation: ticker 28s linear infinite;
-    }
-    .ticker-track:hover { animation-play-state: paused; }
-
-    /* ─── Scroll-reveal ───────────────────────────────────────── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(28px);
-      transition: opacity 0.65s ease, transform 0.65s ease;
-    }
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* ─── Pricing card shimmer border ────────────────────────── */
-    .shimmer-border {
-      position: relative;
-    }
-    .shimmer-border::before {
-      content: '';
-      position: absolute;
-      inset: -1px;
-      border-radius: inherit;
-      background: linear-gradient(135deg, #14b8a6, #6d28d9, #14b8a6);
-      background-size: 300% 300%;
-      animation: shimmerBorder 4s linear infinite;
-      z-index: -1;
-    }
-    @keyframes shimmerBorder {
-      0%   { background-position: 0% 50%; }
-      50%  { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    /* ─── Accordion chevron ───────────────────────────────────── */
-    .faq-chevron { transition: transform 0.3s ease; }
-    .faq-chevron.open { transform: rotate(180deg); }
-
-    /* ─── NFC card visual ─────────────────────────────────────── */
-    .nfc-card {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 20px;
-      position: relative;
-      overflow: hidden;
-      transform-style: preserve-3d;
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
-    }
-    .nfc-card:hover {
-      transform: rotateY(-6deg) rotateX(3deg) translateY(-6px);
-      box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 40px rgba(20,184,166,0.15);
-    }
-    .nfc-card::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%);
-      border-radius: 20px;
-    }
-
-    /* ─── Step connector line ─────────────────────────────────── */
-    .step-line {
-      position: absolute;
-      top: 28px;
-      left: calc(50% + 40px);
-      right: calc(-50% + 40px);
-      height: 1px;
-      background: linear-gradient(90deg, rgba(20,184,166,0.5), rgba(109,40,217,0.2));
-    }
-
-    /* ─── Noise texture overlay ───────────────────────────────── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 9999;
-      opacity: 0.35;
-    }
-
-    /* ─── Nav blur ────────────────────────────────────────────── */
-    .nav-blur {
-      background: rgba(2, 6, 23, 0.75);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-  </style>
+  /* Tweaks panel */
+  #tweaks {
+    position: fixed; right: 20px; bottom: 20px; z-index: 100;
+    background: #0F1A2E; color: #F4EFE4; padding: 16px;
+    border-radius: 16px; box-shadow: 0 20px 50px -20px #0F1A2E66;
+    font-family: 'Inter', sans-serif; font-size: 13px;
+    display: none; min-width: 240px;
+    border: 1px solid #ffffff14;
+  }
+  #tweaks.visible { display: block; }
+  #tweaks h4 {
+    margin: 0 0 12px; font-size: 11px;
+    text-transform: uppercase; color: #C9A24A; letter-spacing: 2px; font-weight: 600;
+  }
+  #tweaks .row { display: flex; gap: 6px; flex-wrap: wrap; }
+  #tweaks button {
+    flex: 1; padding: 8px 10px; border-radius: 999px; border: 1px solid #ffffff1a;
+    background: transparent; color: #F4EFE4; font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+  }
+  #tweaks button.active { background: #C9A24A; color: #0F1A2E; border-color: transparent; }
+</style>
 </head>
-
 <body>
+<div id="root"></div>
 
-<!-- ═══════════════════════════════════════════════════════════
-     STICKY NAVIGATION
-═══════════════════════════════════════════════════════════ -->
-<nav class="nav-blur fixed top-0 left-0 right-0 z-50 py-4 px-6 lg:px-12">
-  <div class="max-w-7xl mx-auto flex items-center justify-between">
-
-    <!-- Logo -->
-    <a href="#" class="flex items-center gap-2 group">
-      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-lg shadow-teal-500/30">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white" opacity="0.9"/>
-          <rect x="9" y="1" width="6" height="6" rx="1.5" fill="white" opacity="0.6"/>
-          <rect x="1" y="9" width="6" height="6" rx="1.5" fill="white" opacity="0.6"/>
-          <rect x="9" y="9" width="6" height="6" rx="1.5" fill="white" opacity="0.9"/>
-        </svg>
-      </div>
-      <span class="text-white font-bold text-xl tracking-tight">Kardex</span>
-    </a>
-
-    <!-- Desktop nav links -->
-    <div class="hidden md:flex items-center gap-8 text-sm text-slate-400 font-medium">
-      <a href="#how-it-works" class="hover:text-white transition-colors">How It Works</a>
-      <a href="#features"     class="hover:text-white transition-colors">Features</a>
-      <a href="#pricing"      class="hover:text-white transition-colors">Pricing</a>
-      <a href="#faq"          class="hover:text-white transition-colors">FAQ</a>
-    </div>
-
-    <!-- Language Switcher + CTA -->
-    <div class="flex items-center gap-4">
-      <div class="hidden sm:flex items-center gap-1 text-xs font-semibold text-slate-500">
-        <a href="/" class="lang-active px-1.5 py-0.5 rounded" style="color:#5eead4;font-weight:700;">EN</a>
-        <span class="text-white/20">|</span>
-        <a href="/ar.html" class="hover:text-white transition-colors px-1.5 py-0.5 rounded">عربي</a>
-        <span class="text-white/20">|</span>
-        <a href="/tr.html" class="hover:text-white transition-colors px-1.5 py-0.5 rounded">TR</a>
-      </div>
-      <a href="#pricing" class="btn-primary px-5 py-2.5 text-sm hidden sm:inline-block">
-        Get Started →
-      </a>
-    </div>
-
-    <!-- Mobile hamburger (Alpine) -->
-    <button
-      x-data="{ open: false }"
-      @click="open = !open"
-      class="sm:hidden text-slate-400 hover:text-white transition-colors"
-      aria-label="Toggle menu"
-    >
-      <i data-lucide="menu" class="w-6 h-6"></i>
-    </button>
-
+<!-- Tweaks panel (shown when host activates edit mode) -->
+<div id="tweaks">
+  <h4>Tweaks</h4>
+  <div style="font-size:12px; color:#9AA3B2; margin-bottom:8px">Card style in demo</div>
+  <div class="row" id="styleRow">
+    <button data-style="classic">Classic</button>
+    <button data-style="minimal">Minimal</button>
+    <button data-style="bold">Bold</button>
+    <button data-style="photo">Photo</button>
   </div>
-</nav>
-<!-- /nav -->
+</div>
 
-
-<!-- ═══════════════════════════════════════════════════════════
-     HERO SECTION
-═══════════════════════════════════════════════════════════ -->
-<section id="hero" class="relative min-h-screen flex items-center justify-center px-6 pt-24 pb-16 overflow-hidden">
-
-  <!-- Background orbs -->
-  <div class="orb w-[600px] h-[600px] bg-teal-500/10 top-[-100px] left-[-200px]  animate-glow-pulse"></div>
-  <div class="orb w-[500px] h-[500px] bg-violet-600/10 bottom-[-50px] right-[-150px] animate-glow-pulse" style="animation-delay:1.5s"></div>
-  <div class="orb w-[300px] h-[300px] bg-teal-400/8  top-[40%]  left-[50%]  translate-x-[-50%]"></div>
-
-  <div class="relative z-10 max-w-5xl mx-auto text-center">
-
-    <!-- Eyebrow badge -->
-    <div class="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 text-xs font-semibold text-teal-300 mb-6 reveal">
-      <span class="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></span>
-      ★★★★★ 4.9/5 from 820+ reviews · NFC-powered · Zero paper waste
-    </div>
-
-    <!-- Headline -->
-    <h1 class="text-5xl sm:text-6xl lg:text-8xl font-black leading-[0.95] tracking-tight mb-6 reveal" style="animation-delay:0.1s">
-      <span class="gradient-text-white">Paper cards are</span><br/>
-      <span class="gradient-text">officially dead.</span>
-    </h1>
-
-    <!-- Subheadline -->
-    <p class="text-slate-400 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed mb-10 reveal" style="animation-delay:0.2s">
-      One tap. Every detail. Kardex turns a single sleek card into a living, breathing digital identity — no app required.
-    </p>
-
-    <!-- CTA Buttons -->
-    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 reveal" style="animation-delay:0.3s">
-      <a href="#pricing" class="btn-primary px-8 py-4 text-base w-full sm:w-auto text-center">
-        Get My Kardex Card — $29.99 →
-      </a>
-      <a href="#how-it-works" class="btn-secondary px-8 py-4 text-base w-full sm:w-auto text-center">
-        See How It Works ↓
-      </a>
-    </div>
-
-    <!-- Trust strip -->
-    <p class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-slate-500 text-xs mt-5 reveal" style="animation-delay:0.35s">
-      <span>🔒 Secure checkout</span>
-      <span class="text-white/10">·</span>
-      <span>🚚 Free worldwide shipping</span>
-      <span class="text-white/10">·</span>
-      <span>✅ 30-day money-back guarantee</span>
-    </p>
-
-    <!-- Hero visual — floating NFC card -->
-    <div class="mt-16 sm:mt-20 reveal" style="animation-delay:0.45s">
-      <div class="relative inline-block">
-        <!-- Glow behind card -->
-        <div class="absolute inset-[-20%] bg-teal-500/10 rounded-full blur-3xl animate-glow-pulse"></div>
-
-        <!-- The physical card mockup -->
-        <div class="nfc-card w-80 sm:w-96 h-52 sm:h-56 mx-auto p-7 cursor-pointer select-none">
-          <!-- Card content -->
-          <div class="relative z-10 h-full flex flex-col justify-between">
-            <!-- Top row -->
-            <div class="flex items-start justify-between">
-              <div>
-                <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1">Digital Identity</p>
-                <p class="text-white font-bold text-lg">Alex Morgan</p>
-                <p class="text-teal-400 text-sm font-medium">Co-Founder & CEO</p>
-              </div>
-              <!-- NFC symbol -->
-              <div class="w-10 h-10 rounded-full border border-teal-400/40 flex items-center justify-center">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" stroke-width="2">
-                  <path d="M12 20.5C7.3 20.5 3.5 16.7 3.5 12S7.3 3.5 12 3.5 20.5 7.3 20.5 12"/>
-                  <path d="M12 16.5c-2.5 0-4.5-2-4.5-4.5S9.5 7.5 12 7.5"/>
-                  <path d="M12 12.5c-.3 0-.5-.2-.5-.5s.2-.5.5-.5.5.2.5.5-.2.5-.5.5z" fill="#14b8a6"/>
-                </svg>
-              </div>
-            </div>
-            <!-- Bottom row -->
-            <div class="flex items-end justify-between">
-              <div class="flex flex-col gap-1">
-                <div class="flex items-center gap-2">
-                  <div class="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></div>
-                  <span class="text-slate-400 text-xs">kardex.io/alexmorgan</span>
-                </div>
-              </div>
-              <!-- Kardex logo on card -->
-              <span class="text-slate-600 font-bold text-sm tracking-wider">KARDEX</span>
-            </div>
-          </div>
-          <!-- Subtle grid pattern on card -->
-          <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 20px 20px;"></div>
-        </div>
-
-        <!-- Floating stat badges -->
-        <div class="absolute -top-4 -right-8 glass-strong rounded-xl px-4 py-2.5 text-xs font-semibold hidden sm:block animate-bounce" style="animation-duration:3s">
-          <span class="text-teal-400">⚡ 0.3s</span>
-          <span class="text-slate-400 ml-1">tap-to-profile</span>
-        </div>
-        <div class="absolute -bottom-4 -left-10 glass-strong rounded-xl px-4 py-2.5 text-xs font-semibold hidden sm:block" style="animation: fadeUp 1s ease 0.8s both">
-          <span class="text-violet-400">📊 247</span>
-          <span class="text-slate-400 ml-1">views this week</span>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-<!-- /hero -->
-
-
-<!-- ═══════════════════════════════════════════════════════════
-     SOCIAL PROOF TICKER
-═══════════════════════════════════════════════════════════ -->
-<section class="py-8 border-y border-white/5 overflow-hidden bg-white/[0.015]">
-  <div class="flex items-center gap-4 mb-3 px-6 max-w-7xl mx-auto">
-    <p class="text-slate-500 text-xs font-semibold uppercase tracking-widest whitespace-nowrap">Trusted by 1,000+ professionals</p>
-    <div class="h-px flex-1 bg-white/5"></div>
-  </div>
-
-  <!-- Ticker wrapper -->
-  <div class="relative overflow-hidden">
-    <!-- Fade edges -->
-    <div class="absolute left-0 top-0 bottom-0 w-24 z-10" style="background: linear-gradient(90deg, #020617, transparent)"></div>
-    <div class="absolute right-0 top-0 bottom-0 w-24 z-10" style="background: linear-gradient(-90deg, #020617, transparent)"></div>
-
-    <div class="ticker-track">
-      <!-- First set -->
-      <div class="flex items-center gap-10 px-5">
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🏢</span> Stripe</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🚀</span> Notion</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">💼</span> Figma</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">📊</span> Airtable</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">⚡</span> Vercel</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🌐</span> Linear</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🎯</span> Loom</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🔮</span> Prismic</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🛡️</span> Clerk</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🎨</span> Framer</span>
-        <span class="w-px h-4 bg-white/10"></span>
-        <span class="text-teal-400 text-xs font-bold uppercase tracking-widest whitespace-nowrap">★ 4.9/5 from 820+ reviews</span>
-        <span class="w-px h-4 bg-white/10"></span>
-      </div>
-      <!-- Duplicate for infinite loop -->
-      <div class="flex items-center gap-10 px-5" aria-hidden="true">
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🏢</span> Stripe</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🚀</span> Notion</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">💼</span> Figma</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">📊</span> Airtable</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">⚡</span> Vercel</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🌐</span> Linear</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🎯</span> Loom</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🔮</span> Prismic</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🛡️</span> Clerk</span>
-        <span class="flex items-center gap-2.5 text-slate-500 text-sm font-medium whitespace-nowrap"><span class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center text-xs">🎨</span> Framer</span>
-        <span class="w-px h-4 bg-white/10"></span>
-        <span class="text-teal-400 text-xs font-bold uppercase tracking-widest whitespace-nowrap">★ 4.9/5 from 820+ reviews</span>
-        <span class="w-px h-4 bg-white/10"></span>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- /social proof -->
-
-
-<!-- ═══════════════════════════════════════════════════════════
-     HOW IT WORKS
-═══════════════════════════════════════════════════════════ -->
-<section id="how-it-works" class="py-24 px-6 relative overflow-hidden">
-
-  <div class="orb w-[500px] h-[500px] bg-violet-600/8 top-0 right-[-100px]"></div>
-
-  <div class="max-w-6xl mx-auto relative z-10">
-
-    <!-- Section header -->
-    <div class="text-center mb-16 reveal">
-      <p class="text-teal-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">The Process</p>
-      <h2 class="text-4xl sm:text-5xl font-black gradient-text-white mb-4">Dead simple.<br/>Devastatingly effective.</h2>
-      <p class="text-slate-500 max-w-md mx-auto">Three steps from box to connection. No setup headaches.</p>
-    </div>
-
-    <!-- Steps grid -->
-    <div class="grid md:grid-cols-3 gap-6 lg:gap-8">
-
-      <!-- Step 1: Design -->
-      <div class="glass rounded-2xl p-8 relative reveal group hover:border-teal-500/30 transition-all duration-300">
-        <div class="absolute -top-4 left-8 w-8 h-8 rounded-full bg-teal-500/20 border border-teal-400/40 flex items-center justify-center text-teal-400 text-xs font-bold">1</div>
-        <div class="w-14 h-14 rounded-2xl bg-teal-500/10 border border-teal-400/20 flex items-center justify-center mb-6 group-hover:bg-teal-500/15 transition-colors">
-          <i data-lucide="pen-tool" class="w-6 h-6 text-teal-400"></i>
-        </div>
-        <h3 class="text-white font-bold text-xl mb-3">Design Your Profile</h3>
-        <p class="text-slate-400 text-sm leading-relaxed">Craft your digital identity in minutes. Add links, socials, photos, and a bio — then fine-tune it to perfection anytime.</p>
-        <!-- Mini UI mockup -->
-        <div class="mt-6 glass rounded-xl p-4 text-xs space-y-2">
-          <div class="flex items-center gap-2">
-            <div class="w-6 h-6 rounded-full bg-teal-400/20"></div>
-            <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
-              <div class="h-full w-3/4 bg-teal-400/50 rounded-full"></div>
-            </div>
-          </div>
-          <div class="flex gap-2">
-            <div class="h-1.5 w-12 bg-white/8 rounded-full"></div>
-            <div class="h-1.5 w-16 bg-white/8 rounded-full"></div>
-            <div class="h-1.5 w-10 bg-teal-400/30 rounded-full"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Step 2: Tap -->
-      <div class="glass rounded-2xl p-8 relative reveal group hover:border-violet-500/30 transition-all duration-300" style="transition-delay:0.1s">
-        <div class="absolute -top-4 left-8 w-8 h-8 rounded-full bg-violet-500/20 border border-violet-400/40 flex items-center justify-center text-violet-400 text-xs font-bold">2</div>
-        <div class="w-14 h-14 rounded-2xl bg-violet-500/10 border border-violet-400/20 flex items-center justify-center mb-6 group-hover:bg-violet-500/15 transition-colors">
-          <i data-lucide="wifi" class="w-6 h-6 text-violet-400"></i>
-        </div>
-        <h3 class="text-white font-bold text-xl mb-3">Tap to Share</h3>
-        <p class="text-slate-400 text-sm leading-relaxed">Hold your Kardex near any modern smartphone. NFC does the rest — no apps, no QR squinting, no friction.</p>
-        <!-- Tap animation visual -->
-        <div class="mt-6 flex items-center justify-center gap-4">
-          <div class="w-10 h-16 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center">
-            <i data-lucide="smartphone" class="w-5 h-5 text-slate-500"></i>
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <div class="w-1.5 h-1.5 rounded-full bg-violet-400 animate-ping"></div>
-            <div class="w-1 h-1 rounded-full bg-violet-400/60 animate-ping" style="animation-delay:0.2s"></div>
-            <div class="w-0.5 h-0.5 rounded-full bg-violet-400/30 animate-ping" style="animation-delay:0.4s"></div>
-          </div>
-          <div class="w-10 h-6 rounded-md bg-teal-400/10 border border-teal-400/30 flex items-center justify-center">
-            <span class="text-teal-400 text-[8px] font-bold">NFC</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Step 3: Connect -->
-      <div class="glass rounded-2xl p-8 relative reveal group hover:border-blue-500/30 transition-all duration-300" style="transition-delay:0.2s">
-        <div class="absolute -top-4 left-8 w-8 h-8 rounded-full bg-blue-500/20 border border-blue-400/40 flex items-center justify-center text-blue-400 text-xs font-bold">3</div>
-        <div class="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-400/20 flex items-center justify-center mb-6 group-hover:bg-blue-500/15 transition-colors">
-          <i data-lucide="users" class="w-6 h-6 text-blue-400"></i>
-        </div>
-        <h3 class="text-white font-bold text-xl mb-3">Watch It Connect</h3>
-        <p class="text-slate-400 text-sm leading-relaxed">They see your full profile instantly. One tap to save your contact, follow your LinkedIn, or book a meeting. Done.</p>
-        <!-- Stats visual -->
-        <div class="mt-6 glass rounded-xl p-4 text-xs space-y-2">
-          <div class="flex justify-between items-center">
-            <span class="text-slate-500">New connection</span>
-            <span class="text-green-400 font-semibold">+1 today</span>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-slate-500">LinkedIn click</span>
-            <span class="text-blue-400 font-semibold">3s ago</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-<!-- /how it works -->
-
-
-<!-- ═══════════════════════════════════════════════════════════
-     FEATURES GRID
-═══════════════════════════════════════════════════════════ -->
-<section id="features" class="py-24 px-6 relative overflow-hidden">
-
-  <div class="orb w-[600px] h-[600px] bg-teal-500/6 bottom-0 left-[-200px]"></div>
-
-  <div class="max-w-6xl mx-auto relative z-10">
-
-    <!-- Header -->
-    <div class="text-center mb-16 reveal">
-      <p class="text-teal-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">Why Kardex</p>
-      <h2 class="text-4xl sm:text-5xl font-black gradient-text-white mb-4">Built for the way<br/>you actually work.</h2>
-      <p class="text-slate-500 max-w-md mx-auto">Everything you need. Nothing you don't.</p>
-    </div>
-
-    <!-- Feature grid: 3 cols on desktop, bento-style -->
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-
-      <!-- Feature 1: NFC Speed -->
-      <div class="glass rounded-2xl p-7 reveal group hover:border-teal-400/20 transition-all duration-300 col-span-1 sm:col-span-2 lg:col-span-1">
-        <div class="w-12 h-12 rounded-xl bg-teal-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-          <i data-lucide="zap" class="w-5 h-5 text-teal-400"></i>
-        </div>
-        <h3 class="text-white font-bold text-lg mb-2">NFC Speed</h3>
-        <p class="text-slate-400 text-sm leading-relaxed mb-5">Under 0.3 seconds from tap to profile. No loading spinners. No lost connections.</p>
-        <!-- Speed meter visual -->
-        <div class="space-y-2">
-          <div class="flex justify-between text-xs text-slate-500 mb-1">
-            <span>Kardex NFC</span>
-            <span class="text-teal-400 font-semibold">0.3s</span>
-          </div>
-          <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-            <div class="h-full bg-gradient-to-r from-teal-400 to-teal-500 rounded-full" style="width:95%"></div>
-          </div>
-          <div class="flex justify-between text-xs text-slate-500 mb-1">
-            <span>QR code scan</span>
-            <span class="text-slate-600">4.2s</span>
-          </div>
-          <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-            <div class="h-full bg-slate-700 rounded-full" style="width:28%"></div>
-          </div>
-          <div class="flex justify-between text-xs text-slate-500 mb-1">
-            <span>Paper card</span>
-            <span class="text-slate-600">Lost forever</span>
-          </div>
-          <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-            <div class="h-full bg-slate-800 rounded-full" style="width:5%"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Feature 2: Dynamic URL -->
-      <div class="glass rounded-2xl p-7 reveal group hover:border-violet-400/20 transition-all duration-300" style="transition-delay:0.1s">
-        <div class="w-12 h-12 rounded-xl bg-violet-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-          <i data-lucide="refresh-cw" class="w-5 h-5 text-violet-400"></i>
-        </div>
-        <h3 class="text-white font-bold text-lg mb-2">Dynamic Updates</h3>
-        <p class="text-slate-400 text-sm leading-relaxed mb-5">Change your job title, switch companies, add a new portfolio link — update once, reflect everywhere. Your card never goes stale.</p>
-        <div class="glass rounded-xl p-3 text-xs space-y-2">
-          <div class="flex items-center gap-2 text-slate-400">
-            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-teal-400"></i>
-            New role updated — live instantly
-          </div>
-          <div class="flex items-center gap-2 text-slate-400">
-            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-teal-400"></i>
-            New portfolio link added
-          </div>
-          <div class="flex items-center gap-2 text-slate-400">
-            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-teal-400"></i>
-            0 reprints needed
-          </div>
-        </div>
-      </div>
-
-      <!-- Feature 3: Analytics -->
-      <div class="glass rounded-2xl p-7 reveal group hover:border-blue-400/20 transition-all duration-300" style="transition-delay:0.15s">
-        <div class="w-12 h-12 rounded-xl bg-blue-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-          <i data-lucide="bar-chart-2" class="w-5 h-5 text-blue-400"></i>
-        </div>
-        <h3 class="text-white font-bold text-lg mb-2">Analytics Dashboard</h3>
-        <p class="text-slate-400 text-sm leading-relaxed mb-5">Know exactly who tapped your card, when, and what they clicked. Turn every interaction into insight.</p>
-        <!-- Mini bar chart -->
-        <div class="flex items-end gap-1.5 h-12">
-          <div class="flex-1 rounded-t bg-blue-400/20" style="height:40%"></div>
-          <div class="flex-1 rounded-t bg-blue-400/30" style="height:60%"></div>
-          <div class="flex-1 rounded-t bg-blue-400/40" style="height:50%"></div>
-          <div class="flex-1 rounded-t bg-blue-400/50" style="height:80%"></div>
-          <div class="flex-1 rounded-t bg-blue-400/60" style="height:65%"></div>
-          <div class="flex-1 rounded-t bg-blue-400/70" style="height:90%"></div>
-          <div class="flex-1 rounded-t bg-blue-400"    style="height:100%"></div>
-        </div>
-        <div class="flex justify-between text-xs text-slate-600 mt-1">
-          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
-        </div>
-      </div>
-
-      <!-- Feature 4: No app needed -->
-      <div class="glass rounded-2xl p-7 reveal group hover:border-amber-400/20 transition-all duration-300" style="transition-delay:0.2s">
-        <div class="w-12 h-12 rounded-xl bg-amber-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-          <i data-lucide="smartphone" class="w-5 h-5 text-amber-400"></i>
-        </div>
-        <h3 class="text-white font-bold text-lg mb-2">No App Required</h3>
-        <p class="text-slate-400 text-sm leading-relaxed">Works on every modern iPhone and Android out of the box. They don't need to install anything — ever.</p>
-      </div>
-
-      <!-- Feature 5: Eco-friendly -->
-      <div class="glass rounded-2xl p-7 reveal group hover:border-green-400/20 transition-all duration-300" style="transition-delay:0.25s">
-        <div class="w-12 h-12 rounded-xl bg-green-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-          <i data-lucide="leaf" class="w-5 h-5 text-green-400"></i>
-        </div>
-        <h3 class="text-white font-bold text-lg mb-2">Zero Paper Waste</h3>
-        <p class="text-slate-400 text-sm leading-relaxed">The average professional burns through 250+ paper cards a year. Kardex replaces all of them — for life.</p>
-      </div>
-
-      <!-- Feature 6: Multi-profile -->
-      <div class="glass rounded-2xl p-7 reveal group hover:border-rose-400/20 transition-all duration-300" style="transition-delay:0.3s">
-        <div class="w-12 h-12 rounded-xl bg-rose-400/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-          <i data-lucide="layers" class="w-5 h-5 text-rose-400"></i>
-        </div>
-        <h3 class="text-white font-bold text-lg mb-2">Multi-Profile Modes</h3>
-        <p class="text-slate-400 text-sm leading-relaxed">Switch between professional, personal, or side-project profiles with a single tap in the app. One card, many identities.</p>
-      </div>
-
-    </div>
-  </div>
-</section>
-<!-- /features -->
-
-
-<!-- ═══════════════════════════════════════════════════════════
-     PRICING / PRODUCT SECTION
-═══════════════════════════════════════════════════════════ -->
-<section id="pricing" class="py-24 px-6 relative overflow-hidden">
-
-  <div class="orb w-[500px] h-[500px] bg-teal-400/8 top-[-100px] left-[50%] translate-x-[-50%]"></div>
-
-  <div class="max-w-5xl mx-auto relative z-10">
-
-    <!-- Header -->
-    <div class="text-center mb-16 reveal">
-      <p class="text-teal-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">Get Yours</p>
-      <h2 class="text-4xl sm:text-5xl font-black gradient-text-white mb-4">One card. Infinite value.</h2>
-      <p class="text-slate-500 max-w-md mx-auto">No subscriptions. No surprises. Pay once — use forever.</p>
-      <p class="text-amber-400 text-xs font-semibold mt-3">🔥 847 sold this month · Introductory pricing — won't last</p>
-    </div>
-
-    <!-- Pricing cards -->
-    <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-
-      <!-- Free tier -->
-      <div class="glass rounded-2xl p-8 reveal flex flex-col">
-        <div class="mb-6">
-          <p class="text-slate-400 text-sm font-semibold uppercase tracking-widest mb-2">Free Profile</p>
-          <div class="flex items-end gap-1.5 mb-2">
-            <span class="text-white font-black text-5xl">$0</span>
-          </div>
-          <p class="text-slate-500 text-sm">Your digital presence, online.</p>
-        </div>
-        <ul class="space-y-3 flex-1 mb-8">
-          <li class="flex items-center gap-3 text-sm text-slate-400">
-            <i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> Custom kardex.io profile URL
-          </li>
-          <li class="flex items-center gap-3 text-sm text-slate-400">
-            <i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> Up to 5 links
-          </li>
-          <li class="flex items-center gap-3 text-sm text-slate-400">
-            <i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> Basic analytics (views only)
-          </li>
-          <li class="flex items-center gap-3 text-sm text-slate-400">
-            <i data-lucide="x" class="w-4 h-4 text-slate-600 shrink-0"></i> <span class="text-slate-600">No physical NFC card</span>
-          </li>
-        </ul>
-        <a href="#" class="btn-secondary text-center py-3.5 text-sm rounded-xl block">Create Free Profile</a>
-      </div>
-
-      <!-- Paid / flagship -->
-      <div class="shimmer-border rounded-2xl reveal" style="transition-delay:0.15s">
-        <div class="glass-strong rounded-2xl p-8 flex flex-col relative overflow-hidden h-full">
-          <!-- Best seller badge -->
-          <div class="absolute top-5 right-5 bg-teal-400/10 border border-teal-400/30 text-teal-400 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
-            Best Seller
-          </div>
-
-          <div class="mb-6">
-            <p class="text-teal-400 text-sm font-semibold uppercase tracking-widest mb-2">Black Matte NFC Card</p>
-            <div class="flex items-end gap-1.5 mb-2">
-              <span class="text-white font-black text-5xl">$29</span>
-              <span class="text-white text-xl font-bold mb-1">.99</span>
-            </div>
-            <p class="text-slate-400 text-sm">One-time payment. Lifetime updates.</p>
-          </div>
-
-          <!-- Card visual inside pricing -->
-          <div class="nfc-card rounded-xl h-24 mb-6 flex items-center justify-center relative overflow-hidden">
-            <div class="relative z-10 flex items-center gap-3">
-              <div class="text-slate-600">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="M12 20.5C7.3 20.5 3.5 16.7 3.5 12S7.3 3.5 12 3.5 20.5 7.3 20.5 12"/>
-                  <path d="M12 16.5c-2.5 0-4.5-2-4.5-4.5S9.5 7.5 12 7.5"/>
-                </svg>
-              </div>
-              <span class="text-white font-bold text-lg tracking-widest">KARDEX</span>
-            </div>
-            <div class="absolute bottom-2 right-3 text-[9px] text-slate-700 font-medium tracking-widest">BLACK MATTE · NFC</div>
-          </div>
-
-          <ul class="space-y-3 flex-1 mb-8">
-            <li class="flex items-center gap-3 text-sm text-slate-300">
-              <i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> Premium Black Matte NFC Card
-            </li>
-            <li class="flex items-center gap-3 text-sm text-slate-300">
-              <i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> Unlimited links & profiles
-            </li>
-            <li class="flex items-center gap-3 text-sm text-slate-300">
-              <i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> Full analytics dashboard
-            </li>
-            <li class="flex items-center gap-3 text-sm text-slate-300">
-              <i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> Dynamic URL updates, always
-            </li>
-            <li class="flex items-center gap-3 text-sm text-slate-300">
-              <i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> Multi-profile switching
-            </li>
-            <li class="flex items-center gap-3 text-sm text-slate-300">
-              <i data-lucide="check" class="w-4 h-4 text-teal-400 shrink-0"></i> Priority support
-            </li>
-          </ul>
-
-          <a href="#" class="btn-primary text-center py-4 text-sm rounded-xl block">
-            Order My Kardex Card →
-          </a>
-
-          <!-- Trust badges -->
-          <div class="flex items-center justify-center gap-4 mt-4 text-[11px] text-slate-500">
-            <span class="flex items-center gap-1"><i data-lucide="shield-check" class="w-3 h-3 text-teal-400"></i> 30-day guarantee</span>
-            <span class="flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3 text-teal-400"></i> Secure checkout</span>
-            <span class="flex items-center gap-1"><i data-lucide="truck" class="w-3 h-3 text-teal-400"></i> Free shipping</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-<!-- /pricing -->
-
-
-<!-- ═══════════════════════════════════════════════════════════
-     TESTIMONIALS / QUOTE STRIP
-═══════════════════════════════════════════════════════════ -->
-<section class="py-16 px-6 border-y border-white/5 bg-white/[0.01]">
-  <div class="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
-
-    <div class="glass rounded-2xl p-7 reveal">
-      <div class="flex gap-1 mb-4">
-        <span class="text-teal-400 text-sm">★★★★★</span>
-      </div>
-      <p class="text-slate-300 text-sm leading-relaxed mb-5">"Handed my Kardex at a conference. The person's face when their phone just opened my profile — priceless. Ordered 3 more for my team."</p>
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-teal-400 to-violet-500 flex items-center justify-center text-white text-xs font-bold">JK</div>
-        <div>
-          <p class="text-white text-sm font-semibold">Jamie K.</p>
-          <p class="text-slate-500 text-xs">Founder, Elevate Labs</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="glass rounded-2xl p-7 reveal" style="transition-delay:0.1s">
-      <div class="flex gap-1 mb-4">
-        <span class="text-teal-400 text-sm">★★★★★</span>
-      </div>
-      <p class="text-slate-300 text-sm leading-relaxed mb-5">"Changed jobs 3 times last year. Zero reprints. Just updated my profile and every single card I'd given out automatically reflected the change."</p>
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-teal-400 flex items-center justify-center text-white text-xs font-bold">SC</div>
-        <div>
-          <p class="text-white text-sm font-semibold">Sofia C.</p>
-          <p class="text-slate-500 text-xs">Head of Sales, Revelo</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="glass rounded-2xl p-7 reveal" style="transition-delay:0.2s">
-      <div class="flex gap-1 mb-4">
-        <span class="text-teal-400 text-sm">★★★★★</span>
-      </div>
-      <p class="text-slate-300 text-sm leading-relaxed mb-5">"The analytics dashboard is a game-changer. I can see exactly which links people click after meeting me. It's like CRM for networking."</p>
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-violet-400 to-rose-400 flex items-center justify-center text-white text-xs font-bold">ML</div>
-        <div>
-          <p class="text-white text-sm font-semibold">Marcus L.</p>
-          <p class="text-slate-500 text-xs">VC Partner, Northbridge</p>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-<!-- /testimonials -->
-
-
-<!-- ═══════════════════════════════════════════════════════════
-     FAQ SECTION (Alpine.js accordion)
-═══════════════════════════════════════════════════════════ -->
-<section id="faq" class="py-24 px-6 relative overflow-hidden">
-
-  <div class="orb w-[400px] h-[400px] bg-violet-600/8 bottom-0 right-[-100px]"></div>
-
-  <div class="max-w-3xl mx-auto relative z-10">
-
-    <!-- Header -->
-    <div class="text-center mb-12 reveal">
-      <p class="text-teal-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">FAQ</p>
-      <h2 class="text-4xl sm:text-5xl font-black gradient-text-white mb-4">Got questions?</h2>
-      <p class="text-slate-500">We've got crisp answers.</p>
-    </div>
-
-    <!-- Accordion items — Alpine.js x-data per item -->
-    <div class="space-y-3">
-
-      <!-- Q1 -->
-      <div class="glass rounded-2xl overflow-hidden reveal" x-data="{ open: false }">
-        <button
-          @click="open = !open"
-          class="w-full flex items-center justify-between px-7 py-5 text-left group"
-        >
-          <span class="text-white font-semibold text-sm sm:text-base">Does the recipient need to install an app?</span>
-          <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0 faq-chevron" :class="{ 'open': open }"></i>
-        </button>
-        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2">
-          <div class="px-7 pb-6 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4">
-            No app required on either end. When someone taps your Kardex, their phone's native NFC reader opens your profile in their browser instantly. It works on any iPhone (iOS 11+) or Android (6.0+).
-          </div>
-        </div>
-      </div>
-
-      <!-- Q2 -->
-      <div class="glass rounded-2xl overflow-hidden reveal" x-data="{ open: false }">
-        <button
-          @click="open = !open"
-          class="w-full flex items-center justify-between px-7 py-5 text-left group"
-        >
-          <span class="text-white font-semibold text-sm sm:text-base">What if I change jobs or update my info?</span>
-          <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0 faq-chevron" :class="{ 'open': open }"></i>
-        </button>
-        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2">
-          <div class="px-7 pb-6 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4">
-            That's the magic. Update your Kardex profile once in the dashboard and every single card you've ever given out — past and present — will reflect your new info the next time it's tapped. Zero reprints, ever.
-          </div>
-        </div>
-      </div>
-
-      <!-- Q3 -->
-      <div class="glass rounded-2xl overflow-hidden reveal" x-data="{ open: false }">
-        <button
-          @click="open = !open"
-          class="w-full flex items-center justify-between px-7 py-5 text-left group"
-        >
-          <span class="text-white font-semibold text-sm sm:text-base">Is my data private and secure?</span>
-          <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0 faq-chevron" :class="{ 'open': open }"></i>
-        </button>
-        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2">
-          <div class="px-7 pb-6 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4">
-            Absolutely. You control exactly what's visible on your profile. Analytics data is anonymized. We never sell your data or that of your connections. Your profile URL is publicly accessible only if you choose to share it.
-          </div>
-        </div>
-      </div>
-
-      <!-- Q4 -->
-      <div class="glass rounded-2xl overflow-hidden reveal" x-data="{ open: false }">
-        <button
-          @click="open = !open"
-          class="w-full flex items-center justify-between px-7 py-5 text-left group"
-        >
-          <span class="text-white font-semibold text-sm sm:text-base">How durable is the card?</span>
-          <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0 faq-chevron" :class="{ 'open': open }"></i>
-        </button>
-        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2">
-          <div class="px-7 pb-6 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4">
-            Kardex cards are made from premium PVC with a matte black finish — the same material as a high-end credit card. Water-resistant, scratch-resistant, and built to live in your wallet for years. The NFC chip is rated for 100,000+ taps.
-          </div>
-        </div>
-      </div>
-
-      <!-- Q5 -->
-      <div class="glass rounded-2xl overflow-hidden reveal" x-data="{ open: false }">
-        <button
-          @click="open = !open"
-          class="w-full flex items-center justify-between px-7 py-5 text-left group"
-        >
-          <span class="text-white font-semibold text-sm sm:text-base">Can I use Kardex for my whole team?</span>
-          <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0 faq-chevron" :class="{ 'open': open }"></i>
-        </button>
-        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2">
-          <div class="px-7 pb-6 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4">
-            Yes. We offer bulk orders with custom branding for teams of any size. Reach out to <span class="text-teal-400">teams@kardex.io</span> for volume pricing and white-glove onboarding.
-          </div>
-        </div>
-      </div>
-
-      <!-- Q6 -->
-      <div class="glass rounded-2xl overflow-hidden reveal" x-data="{ open: false }">
-        <button
-          @click="open = !open"
-          class="w-full flex items-center justify-between px-7 py-5 text-left group"
-        >
-          <span class="text-white font-semibold text-sm sm:text-base">What if I'm not satisfied?</span>
-          <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0 faq-chevron" :class="{ 'open': open }"></i>
-        </button>
-        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2">
-          <div class="px-7 pb-6 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4">
-            No risk, ever. If you're not completely happy within 30 days of receiving your card, we'll refund you in full — no questions asked. Just email <span class="text-teal-400">support@kardex.io</span> and we'll take care of it same day.
-          </div>
-        </div>
-      </div>
-
-      <!-- Q7 -->
-      <div class="glass rounded-2xl overflow-hidden reveal" x-data="{ open: false }">
-        <button
-          @click="open = !open"
-          class="w-full flex items-center justify-between px-7 py-5 text-left group"
-        >
-          <span class="text-white font-semibold text-sm sm:text-base">Are there any recurring fees?</span>
-          <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 group-hover:text-teal-400 transition-colors shrink-0 faq-chevron" :class="{ 'open': open }"></i>
-        </button>
-        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2">
-          <div class="px-7 pb-6 text-slate-400 text-sm leading-relaxed border-t border-white/5 pt-4">
-            None. $29.99 once — that's it. Profile hosting, analytics, dynamic updates, and all future features are included for life. No monthly fees, no premium tier, no gotchas.
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-<!-- /faq -->
-
-
-<!-- ═══════════════════════════════════════════════════════════
-     FINAL CTA / FOOTER
-═══════════════════════════════════════════════════════════ -->
-<section class="py-28 px-6 relative overflow-hidden">
-
-  <div class="orb w-[700px] h-[700px] bg-teal-500/10 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] animate-glow-pulse"></div>
-
-  <div class="max-w-3xl mx-auto text-center relative z-10">
-
-    <div class="reveal">
-      <p class="text-teal-400 text-xs font-bold uppercase tracking-[0.2em] mb-4">Your last first impression</p>
-      <h2 class="text-5xl sm:text-6xl lg:text-7xl font-black gradient-text-white leading-tight mb-6">
-        Stop handing out<br/>
-        <span class="gradient-text">dead cards.</span>
-      </h2>
-      <p class="text-slate-400 text-lg max-w-xl mx-auto mb-10">
-        Join 1,000+ professionals who've already made the switch. One purchase. Endless connections.
-      </p>
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a href="#" class="btn-primary px-10 py-4 text-base w-full sm:w-auto text-center">
-          Order My Card Now — $29.99 →
-        </a>
-        <a href="#" class="btn-secondary px-10 py-4 text-base w-full sm:w-auto text-center">
-          Create Free Profile
-        </a>
-      </div>
-      <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 mt-6 text-xs text-slate-500">
-        <span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-teal-400"></i> 30-day money-back guarantee</span>
-        <span class="flex items-center gap-1.5"><i data-lucide="truck" class="w-3.5 h-3.5 text-teal-400"></i> Free worldwide shipping</span>
-        <span class="flex items-center gap-1.5"><i data-lucide="lock" class="w-3.5 h-3.5 text-teal-400"></i> Secure checkout</span>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- Footer -->
-<footer class="border-t border-white/5 py-10 px-6">
-  <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-slate-600 text-xs">
-    <div class="flex items-center gap-2">
-      <div class="w-6 h-6 rounded-md bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center">
-        <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-          <rect x="1" y="1" width="6" height="6" rx="1.5" fill="white" opacity="0.9"/>
-          <rect x="9" y="1" width="6" height="6" rx="1.5" fill="white" opacity="0.6"/>
-          <rect x="1" y="9" width="6" height="6" rx="1.5" fill="white" opacity="0.6"/>
-          <rect x="9" y="9" width="6" height="6" rx="1.5" fill="white" opacity="0.9"/>
-        </svg>
-      </div>
-      <span class="text-slate-400 font-semibold">Kardex</span>
-      <span>· © 2025 · All rights reserved</span>
-    </div>
-    <div class="flex items-center gap-6">
-      <a href="#" class="hover:text-slate-400 transition-colors">Privacy</a>
-      <a href="#" class="hover:text-slate-400 transition-colors">Terms</a>
-      <a href="#" class="hover:text-slate-400 transition-colors">Contact</a>
-      <a href="#" class="hover:text-slate-400 transition-colors">Instagram</a>
-      <a href="#" class="hover:text-slate-400 transition-colors">Twitter</a>
-    </div>
-  </div>
-</footer>
-<!-- /footer -->
-
-
-<!-- ═══════════════════════════════════════════════════════════
-     SCRIPTS
-═══════════════════════════════════════════════════════════ -->
 <script>
-  // ── Scroll-reveal observer (runs as soon as DOM is ready) ─────────────
-  document.addEventListener('DOMContentLoaded', () => {
-    const revealObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            revealObserver.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
-    );
-
-    document.querySelectorAll('.reveal').forEach((el) => {
-      revealObserver.observe(el);
-    });
-
-    // ── Smooth scroll for anchor links ────────────────────
-    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-      anchor.addEventListener('click', (e) => {
-        const target = document.querySelector(anchor.getAttribute('href'));
-        if (target) {
-          e.preventDefault();
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-    });
-  });
-
-  // ── Initialize Lucide icons once the deferred script has loaded ───────
-  window.addEventListener('load', () => {
-    if (typeof lucide !== 'undefined') {
-      lucide.createIcons();
-      // Re-init after Alpine has had a chance to render dynamic content
-      setTimeout(() => lucide.createIcons(), 300);
-    }
-  });
+  // Editable defaults — host can rewrite this block
+  window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "cardStyle": "classic"
+  }/*EDITMODE-END*/;
 </script>
 
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+<script type="text/babel">
+// Live digital business card preview — 4 styles
+const { useMemo } = React;
+
+function initials(name) {
+  const parts = (name || '').trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return 'YN';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+// Deterministic tiny QR-ish pattern for visual fidelity
+function QRPattern({ size = 72, fg = '#0F1A2E', bg = '#fff' }) {
+  const cells = 17;
+  const pattern = useMemo(() => {
+    const p = [];
+    for (let y = 0; y < cells; y++) {
+      for (let x = 0; x < cells; x++) {
+        // finder squares in 3 corners
+        const inFinder =
+          (x < 7 && y < 7) ||
+          (x >= cells - 7 && y < 7) ||
+          (x < 7 && y >= cells - 7);
+        if (inFinder) {
+          const fx = x < 7 ? x : x - (cells - 7);
+          const fy = y < 7 ? y : y - (cells - 7);
+          const border = fx === 0 || fx === 6 || fy === 0 || fy === 6;
+          const inner = fx >= 2 && fx <= 4 && fy >= 2 && fy <= 4;
+          if (border || inner) p.push([x, y]);
+        } else {
+          // pseudo-random
+          const v = (Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1;
+          if (Math.abs(v) > 0.55) p.push([x, y]);
+        }
+      }
+    }
+    return p;
+  }, []);
+  const s = size / cells;
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <rect width={size} height={size} fill={bg} />
+      {pattern.map(([x, y], i) => (
+        <rect key={i} x={x * s} y={y * s} width={s} height={s} fill={fg} />
+      ))}
+    </svg>
+  );
+}
+
+function SocialDot({ children, bg = '#ffffff14', fg = '#fff' }) {
+  return (
+    <div style={{
+      width: 34, height: 34, borderRadius: 999,
+      background: bg, color: fg,
+      display: 'grid', placeItems: 'center',
+      fontSize: 14, fontWeight: 600,
+      border: '1px solid #ffffff1f',
+    }}>{children}</div>
+  );
+}
+
+// ────────────────────────── CARD STYLES ──────────────────────────
+
+function ClassicCard({ name, title, company }) {
+  return (
+    <div style={{
+      width: 300, borderRadius: 22, padding: 22,
+      background: 'linear-gradient(180deg,#14223B 0%, #0C1627 100%)',
+      color: '#F4EFE4', boxShadow: '0 30px 60px -30px #0F1A2E66, 0 1px 0 #ffffff10 inset',
+      fontFamily: 'Inter, sans-serif',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div style={{
+          width: 68, height: 68, borderRadius: 999,
+          background: 'linear-gradient(145deg,#D9B65F,#A6832F)',
+          color: '#0F1A2E', fontWeight: 700, fontSize: 22,
+          display: 'grid', placeItems: 'center',
+          boxShadow: '0 1px 0 #ffffff40 inset',
+        }}>{initials(name)}</div>
+        <div style={{ width: 10, height: 10, borderRadius: 999, background: '#3FD27E', boxShadow: '0 0 0 3px #3FD27E22' }} />
+      </div>
+      <div style={{ marginTop: 20 }}>
+        <div style={{ fontSize: 19, fontWeight: 600, letterSpacing: -0.2 }}>{name || 'Your Name'}</div>
+        <div style={{ fontSize: 13, color: '#C9A24A', marginTop: 2 }}>{title || 'Your Title'}</div>
+        <div style={{ fontSize: 12, color: '#9AA3B2', marginTop: 2 }}>{company || 'Your Company'}</div>
+      </div>
+      <div style={{ display: 'flex', gap: 8, marginTop: 18 }}>
+        <SocialDot>in</SocialDot>
+        <SocialDot>@</SocialDot>
+        <SocialDot>✉</SocialDot>
+        <SocialDot>☏</SocialDot>
+      </div>
+      <div style={{
+        marginTop: 18, padding: 14, borderRadius: 14,
+        background: '#ffffff08', border: '1px solid #ffffff14',
+        display: 'flex', alignItems: 'center', gap: 12,
+      }}>
+        <div style={{ background: '#C9A24A', padding: 6, borderRadius: 8 }}>
+          <QRPattern size={56} fg="#0F1A2E" bg="#C9A24A" />
+        </div>
+        <div style={{ fontSize: 11, color: '#9AA3B2', lineHeight: 1.4 }}>
+          Scan to save<br/>contact
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MinimalCard({ name, title, company }) {
+  return (
+    <div style={{
+      width: 300, borderRadius: 22, padding: 26,
+      background: '#FAF7F2', color: '#0F1A2E',
+      boxShadow: '0 30px 60px -30px #0F1A2E33, 0 0 0 1px #0F1A2E0D',
+      fontFamily: 'Inter, sans-serif',
+    }}>
+      <div style={{
+        fontSize: 10, letterSpacing: 2, textTransform: 'uppercase',
+        color: '#9B8449',
+      }}>Kardex · Card</div>
+      <div style={{ height: 1, background: '#0F1A2E1A', margin: '14px 0 22px' }} />
+      <div style={{ fontFamily: "'Instrument Serif', Georgia, serif", fontSize: 30, lineHeight: 1.05, letterSpacing: -0.5 }}>
+        {name || 'Your Name'}
+      </div>
+      <div style={{ fontSize: 13, marginTop: 8, color: '#4A5464' }}>{title || 'Your Title'}</div>
+      <div style={{ fontSize: 13, color: '#4A5464' }}>{company || 'Your Company'}</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 48 }}>
+        <div>
+          <div style={{ fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: '#9B8449' }}>Connect</div>
+          <div style={{ fontSize: 12, color: '#0F1A2E', marginTop: 6 }}>linkedin · email · web</div>
+        </div>
+        <QRPattern size={60} fg="#0F1A2E" bg="#FAF7F2" />
+      </div>
+    </div>
+  );
+}
+
+function BoldCard({ name, title, company }) {
+  return (
+    <div style={{
+      width: 300, borderRadius: 22, padding: 0,
+      background: '#C9A24A', color: '#0F1A2E',
+      boxShadow: '0 30px 60px -30px #C9A24A66',
+      fontFamily: 'Inter, sans-serif',
+      overflow: 'hidden',
+    }}>
+      <div style={{ padding: '26px 24px 20px' }}>
+        <div style={{
+          fontFamily: "'Instrument Serif', Georgia, serif",
+          fontSize: 40, lineHeight: 1, letterSpacing: -1,
+        }}>{name || 'Your\nName'}</div>
+        <div style={{ fontSize: 13, marginTop: 10, fontWeight: 500 }}>
+          {title || 'Your Title'} · {company || 'Your Company'}
+        </div>
+      </div>
+      <div style={{
+        background: '#0F1A2E', color: '#F4EFE4',
+        padding: '18px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      }}>
+        <div>
+          <div style={{ fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: '#C9A24A' }}>Tap · Scan · Save</div>
+          <div style={{ fontSize: 12, marginTop: 4, color: '#9AA3B2' }}>kardex.cards/you</div>
+        </div>
+        <div style={{ background: '#fff', padding: 4, borderRadius: 6 }}>
+          <QRPattern size={54} fg="#0F1A2E" bg="#fff" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PhotoCard({ name, title, company }) {
+  return (
+    <div style={{
+      width: 300, borderRadius: 22, padding: 0, overflow: 'hidden',
+      background: '#0F1A2E', color: '#F4EFE4',
+      boxShadow: '0 30px 60px -30px #0F1A2E66',
+      fontFamily: 'Inter, sans-serif',
+    }}>
+      {/* striped placeholder photo */}
+      <div style={{
+        height: 150,
+        background: `repeating-linear-gradient(135deg, #1B2A47 0 14px, #15233D 14px 28px)`,
+        position: 'relative',
+      }}>
+        <div style={{
+          position: 'absolute', inset: 0, display: 'grid', placeItems: 'center',
+          fontFamily: 'ui-monospace, Menlo, monospace', fontSize: 10, color: '#C9A24A',
+          letterSpacing: 2,
+        }}>[ PORTRAIT ]</div>
+        <div style={{
+          position: 'absolute', top: 14, right: 14,
+          background: '#C9A24A', color: '#0F1A2E',
+          fontSize: 10, fontWeight: 700, letterSpacing: 2,
+          padding: '4px 8px', borderRadius: 4,
+        }}>LIVE</div>
+      </div>
+      <div style={{ padding: '18px 22px 22px' }}>
+        <div style={{ fontSize: 20, fontWeight: 600, letterSpacing: -0.3 }}>{name || 'Your Name'}</div>
+        <div style={{ fontSize: 13, color: '#C9A24A', marginTop: 2 }}>{title || 'Your Title'}</div>
+        <div style={{ fontSize: 12, color: '#9AA3B2' }}>{company || 'Your Company'}</div>
+        <div style={{
+          marginTop: 16, display: 'flex', alignItems: 'center', gap: 12,
+          paddingTop: 14, borderTop: '1px solid #ffffff14',
+        }}>
+          <QRPattern size={48} fg="#F4EFE4" bg="#0F1A2E" />
+          <div style={{ fontSize: 11, color: '#9AA3B2' }}>
+            Scan — contact saves<br/>to your phone instantly
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Card({ style = 'classic', name, title, company }) {
+  const props = { name, title, company };
+  if (style === 'minimal') return <MinimalCard {...props} />;
+  if (style === 'bold') return <BoldCard {...props} />;
+  if (style === 'photo') return <PhotoCard {...props} />;
+  return <ClassicCard {...props} />;
+}
+
+Object.assign(window, { Card, QRPattern, initials });
+
+
+// ═══════════════════════════════
+
+// Page sections — all composed inside App.jsx
+
+const { useState, useEffect, useRef } = React;
+
+// Small UI atoms ─────────────────────────────────────────
+function Eyebrow({ children, light }) {
+  return (
+    <div style={{
+      fontSize: 11, letterSpacing: 3, textTransform: 'uppercase',
+      color: light ? '#C9A24A' : '#9B8449', fontWeight: 600,
+    }}>{children}</div>
+  );
+}
+
+function GoldRule() {
+  return <div style={{ width: 40, height: 2, background: '#C9A24A', margin: '18px 0 22px' }} />;
+}
+
+function Button({ primary, children, onClick, dark, small }) {
+  const base = {
+    padding: small ? '10px 16px' : '14px 22px',
+    borderRadius: 999,
+    fontSize: small ? 13 : 14,
+    fontWeight: 600,
+    border: 'none',
+    cursor: 'pointer',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 8,
+    transition: 'transform .15s ease, box-shadow .15s ease, background .15s ease',
+    fontFamily: 'inherit',
+  };
+  const primaryStyle = {
+    ...base,
+    background: '#C9A24A',
+    color: '#0F1A2E',
+    boxShadow: '0 10px 24px -10px #C9A24A99',
+  };
+  const secondaryStyle = {
+    ...base,
+    background: dark ? 'transparent' : '#fff',
+    color: dark ? '#F4EFE4' : '#0F1A2E',
+    border: dark ? '1px solid #ffffff33' : '1px solid #0F1A2E22',
+  };
+  return (
+    <button onClick={onClick} style={primary ? primaryStyle : secondaryStyle}
+      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
+      onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; }}
+    >
+      {children}
+    </button>
+  );
+}
+
+// NAV ──────────────────────────────────────────────────
+function Nav({ onCta }) {
+  return (
+    <nav style={{
+      position: 'sticky', top: 0, zIndex: 50,
+      WebkitBackdropFilter: 'blur(14px)',
+      backdropFilter: 'blur(14px)',
+      background: '#FAF7F2CC',
+      borderBottom: '1px solid #0F1A2E10',
+    }}>
+      <div style={{
+        maxWidth: 1240, margin: '0 auto',
+        padding: '16px 40px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
+          <div style={{
+            fontFamily: "'Instrument Serif', Georgia, serif",
+            fontSize: 26, letterSpacing: -0.5, color: '#0F1A2E',
+          }}>
+            Kardex<span style={{ color: '#C9A24A' }}>.</span>
+          </div>
+          <div style={{ display: 'flex', gap: 28, fontSize: 14, color: '#4A5464' }}>
+            <a style={linkStyle} href="#features">Features</a>
+            <a style={linkStyle} href="#how">How it works</a>
+            <a style={linkStyle} href="#pricing">Pricing</a>
+            <a style={linkStyle} href="#directory">Directory</a>
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <a style={{ ...linkStyle, fontSize: 14 }} href="/login">Log in</a>
+          <Button primary small onClick={onCta}>
+            Create your card <span>→</span>
+          </Button>
+        </div>
+      </div>
+    </nav>
+  );
+}
+const linkStyle = { color: '#0F1A2E', textDecoration: 'none', fontWeight: 500 };
+
+// HERO — interactive card builder ──────────────────────
+function Hero({ form, setForm, cardStyle, setCardStyle }) {
+  return (
+    <section style={{
+      position: 'relative',
+      padding: '60px 40px 100px',
+      overflow: 'hidden',
+    }}>
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 0,
+        background: 'radial-gradient(1000px 500px at 85% 30%, #C9A24A14, transparent 70%)',
+      }} />
+      <div style={{
+        maxWidth: 1240, margin: '0 auto', position: 'relative', zIndex: 1,
+        display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 80, alignItems: 'center',
+      }}>
+        <div>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            padding: '6px 12px', borderRadius: 999,
+            background: '#C9A24A14', color: '#9B8449',
+            fontSize: 12, fontWeight: 600, letterSpacing: 0.2,
+            border: '1px solid #C9A24A30',
+          }}>
+            <span style={{ width: 6, height: 6, borderRadius: 999, background: '#C9A24A' }} />
+            New · Advanced analytics dashboard
+          </div>
+          <h1 style={{
+            fontFamily: "'Instrument Serif', Georgia, serif",
+            fontSize: 84, lineHeight: 0.98, letterSpacing: -2,
+            margin: '24px 0 0', color: '#0F1A2E',
+            fontWeight: 400,
+          }}>
+            Your business card,<br/>
+            <span style={{ fontStyle: 'italic', color: '#9B8449' }}>reimagined.</span>
+          </h1>
+          <p style={{
+            fontSize: 18, lineHeight: 1.5, color: '#4A5464',
+            margin: '24px 0 0', maxWidth: 460,
+          }}>
+            Build a beautiful digital card in under a minute. Share by QR, tap, or link —
+            and see exactly who saved your contact.
+          </p>
+
+          {/* Live builder form */}
+          <div style={{
+            marginTop: 36, padding: 24, borderRadius: 20,
+            background: '#fff', border: '1px solid #0F1A2E14',
+            boxShadow: '0 20px 50px -30px #0F1A2E20',
+          }}>
+            <Eyebrow>Start building — live preview →</Eyebrow>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 14 }}>
+              <Field label="Your name" value={form.name} onChange={v => setForm({ ...form, name: v })} placeholder="Ada Lovelace" />
+              <Field label="Your title" value={form.title} onChange={v => setForm({ ...form, title: v })} placeholder="Founder" />
+            </div>
+            <div style={{ marginTop: 12 }}>
+              <Field label="Company" value={form.company} onChange={v => setForm({ ...form, company: v })} placeholder="Analytical Engines, Inc." />
+            </div>
+            <div style={{ display: 'flex', gap: 10, marginTop: 18, alignItems: 'center' }}>
+              <Button primary>Claim this card <span>→</span></Button>
+              <span style={{ fontSize: 13, color: '#4A5464' }}>Free forever · No credit card</span>
+            </div>
+          </div>
+
+          {/* Stats row */}
+          <div style={{ display: 'flex', gap: 48, marginTop: 40 }}>
+            <Stat big="120K+" label="Cards created" />
+            <Stat big="4.2M" label="Contacts saved" />
+            <Stat big="99%" label="Would recommend" />
+          </div>
+        </div>
+
+        {/* Right: live card + style switcher */}
+        <div style={{ position: 'relative', display: 'grid', placeItems: 'center' }}>
+          <div style={{
+            position: 'absolute', width: 340, height: 440,
+            borderRadius: 24, background: 'linear-gradient(145deg, #C9A24A22, transparent)',
+            filter: 'blur(20px)', zIndex: 0,
+          }} />
+          <div style={{ position: 'relative', zIndex: 1, transform: 'rotate(-2deg)' }}>
+            <Card style={cardStyle} {...form} />
+          </div>
+          <StylePicker style={cardStyle} setStyle={setCardStyle} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Field({ label, value, onChange, placeholder }) {
+  return (
+    <label style={{ display: 'block' }}>
+      <div style={{ fontSize: 11, color: '#9AA3B2', marginBottom: 6, fontWeight: 500, textTransform: 'uppercase', letterSpacing: 0.8 }}>{label}</div>
+      <input
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+        style={{
+          width: '100%', padding: '10px 12px', borderRadius: 10,
+          border: '1px solid #0F1A2E1A', background: '#FAF7F2',
+          fontSize: 14, fontFamily: 'inherit', color: '#0F1A2E',
+          outline: 'none',
+        }}
+      />
+    </label>
+  );
+}
+
+function Stat({ big, label }) {
+  return (
+    <div>
+      <div style={{ fontFamily: "'Instrument Serif', Georgia, serif", fontSize: 32, color: '#0F1A2E', letterSpacing: -0.5 }}>{big}</div>
+      <div style={{ fontSize: 12, color: '#4A5464', textTransform: 'uppercase', letterSpacing: 1 }}>{label}</div>
+    </div>
+  );
+}
+
+function StylePicker({ style, setStyle }) {
+  const items = [
+    { id: 'classic', label: 'Classic' },
+    { id: 'minimal', label: 'Minimal' },
+    { id: 'bold',    label: 'Bold' },
+    { id: 'photo',   label: 'Photo' },
+  ];
+  return (
+    <div style={{
+      position: 'absolute', bottom: -10, zIndex: 2,
+      display: 'flex', gap: 4, padding: 4,
+      background: '#0F1A2E', borderRadius: 999,
+      boxShadow: '0 20px 40px -20px #0F1A2E66',
+    }}>
+      {items.map(i => (
+        <button key={i.id} onClick={() => setStyle(i.id)}
+          style={{
+            padding: '8px 14px', borderRadius: 999, border: 'none',
+            background: style === i.id ? '#C9A24A' : 'transparent',
+            color: style === i.id ? '#0F1A2E' : '#F4EFE4',
+            fontSize: 12, fontWeight: 600, cursor: 'pointer',
+            fontFamily: 'inherit', transition: 'all .15s',
+          }}
+        >{i.label}</button>
+      ))}
+    </div>
+  );
+}
+
+// LOGO BAR ─────────────────────────────────────────────
+function LogoBar() {
+  const logos = ['Northwind', 'Monogram', 'Halcyon', 'Orbital', 'Fieldnote', 'Meridian', 'Paperclip'];
+  return (
+    <section style={{ padding: '40px 40px 20px', borderTop: '1px solid #0F1A2E10', borderBottom: '1px solid #0F1A2E10' }}>
+      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', fontSize: 12, color: '#4A5464', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 24 }}>
+          Trusted by teams at
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 30, flexWrap: 'wrap', opacity: 0.6 }}>
+          {logos.map(l => (
+            <div key={l} style={{
+              fontFamily: "'Instrument Serif', Georgia, serif",
+              fontSize: 22, color: '#0F1A2E', letterSpacing: -0.5,
+            }}>{l}</div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// HOW IT WORKS ─────────────────────────────────────────
+function HowItWorks() {
+  const steps = [
+    { n: '01', t: 'Build in a minute', d: 'Pick a style, drop in your details, links and logo. No design skills needed.' },
+    { n: '02', t: 'Share anywhere', d: 'Tap NFC, scan QR, send a link, or add to Apple Wallet — your card works everywhere.' },
+    { n: '03', t: 'Track every tap', d: 'See who saved your contact, which link they clicked, and follow up with context.' },
+  ];
+  return (
+    <section id="how" style={{ padding: '120px 40px', background: '#FAF7F2' }}>
+      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 60 }}>
+          <div>
+            <Eyebrow>How it works</Eyebrow>
+            <h2 style={{
+              fontFamily: "'Instrument Serif', Georgia, serif",
+              fontSize: 54, margin: '16px 0 0', letterSpacing: -1, color: '#0F1A2E', fontWeight: 400, maxWidth: 640, lineHeight: 1.05,
+            }}>
+              From blank page to <span style={{ fontStyle: 'italic', color: '#9B8449' }}>first handshake</span> in under a minute.
+            </h2>
+          </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 32 }}>
+          {steps.map(s => (
+            <div key={s.n} style={{
+              padding: '36px 28px', borderRadius: 20,
+              background: '#fff', border: '1px solid #0F1A2E10',
+            }}>
+              <div style={{ fontFamily: "'Instrument Serif', Georgia, serif", fontSize: 48, color: '#C9A24A', lineHeight: 1 }}>{s.n}</div>
+              <GoldRule />
+              <div style={{ fontSize: 22, color: '#0F1A2E', fontWeight: 600, letterSpacing: -0.3 }}>{s.t}</div>
+              <div style={{ fontSize: 15, color: '#4A5464', marginTop: 10, lineHeight: 1.5 }}>{s.d}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// FEATURE GRID ─────────────────────────────────────────
+function Features() {
+  return (
+    <section id="features" style={{ padding: '120px 40px', background: '#0F1A2E', color: '#F4EFE4' }}>
+      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+        <Eyebrow light>Features</Eyebrow>
+        <h2 style={{
+          fontFamily: "'Instrument Serif', Georgia, serif",
+          fontSize: 54, margin: '16px 0 60px', letterSpacing: -1, fontWeight: 400, maxWidth: 720, lineHeight: 1.05,
+        }}>
+          A quiet, powerful <span style={{ fontStyle: 'italic', color: '#C9A24A' }}>toolkit</span> behind every card.
+        </h2>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gridAutoRows: 'minmax(220px, auto)', gap: 16 }}>
+          <FeatureCard span={3} title="Real-time analytics" sub="See every tap, scan and save. Filter by event, city, day." accent>
+            <AnalyticsMini />
+          </FeatureCard>
+          <FeatureCard span={3} title="One card, every surface" sub="QR, NFC tap, Apple Wallet, Android Wallet, deep link, email signature.">
+            <SurfacesMini />
+          </FeatureCard>
+
+          <FeatureCard span={2} title="Order NFC cards" sub="Premium metal & wood cards shipped in 3 days.">
+            <div style={{ display: 'flex', gap: 6, marginTop: 'auto' }}>
+              {['#C9A24A','#D6C6A0','#0F1A2E','#E3E0D7'].map((c,i) => (
+                <div key={i} style={{ width: 40, height: 60, borderRadius: 6, background: c, border: '1px solid #ffffff22' }} />
+              ))}
+            </div>
+          </FeatureCard>
+          <FeatureCard span={2} title="Team directory" sub="Roll out branded cards for your whole company in one click.">
+            <TeamMini />
+          </FeatureCard>
+          <FeatureCard span={2} title="120+ integrations" sub="HubSpot, Salesforce, Notion, Slack, Gmail & more.">
+            <IntegrationsMini />
+          </FeatureCard>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FeatureCard({ span = 2, title, sub, accent, children }) {
+  return (
+    <div style={{
+      gridColumn: `span ${span}`,
+      padding: 26, borderRadius: 20,
+      background: accent ? 'linear-gradient(180deg,#1A2843,#131E36)' : '#131E36',
+      border: '1px solid #ffffff14',
+      display: 'flex', flexDirection: 'column', gap: 16,
+      position: 'relative', overflow: 'hidden',
+    }}>
+      <div>
+        <div style={{ fontSize: 18, fontWeight: 600, letterSpacing: -0.3, color: '#F4EFE4' }}>{title}</div>
+        <div style={{ fontSize: 13, color: '#9AA3B2', marginTop: 6, maxWidth: 300, lineHeight: 1.5 }}>{sub}</div>
+      </div>
+      <div style={{ marginTop: 'auto' }}>{children}</div>
+    </div>
+  );
+}
+
+function AnalyticsMini() {
+  const bars = [20, 34, 28, 52, 48, 70, 64, 88, 76, 92, 80, 100];
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 90 }}>
+        {bars.map((h,i) => (
+          <div key={i} style={{
+            flex: 1, height: `${h}%`,
+            background: i === bars.length - 1 ? '#C9A24A' : '#C9A24A55',
+            borderRadius: 3,
+          }} />
+        ))}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10, fontSize: 11, color: '#9AA3B2' }}>
+        <span>Jan</span><span>Mar</span><span>May</span><span>Jul</span><span>Sep</span><span>Nov</span>
+      </div>
+    </div>
+  );
+}
+
+function SurfacesMini() {
+  const items = ['QR', 'NFC', 'URL', 'Apple Wallet', 'Email sig', 'Airdrop'];
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+      {items.map(i => (
+        <div key={i} style={{
+          padding: '8px 12px', borderRadius: 999,
+          background: '#ffffff10', color: '#F4EFE4',
+          fontSize: 12, border: '1px solid #ffffff1a',
+        }}>{i}</div>
+      ))}
+    </div>
+  );
+}
+
+function TeamMini() {
+  const colors = ['#C9A24A', '#3FD27E', '#6AA0F0', '#E07A7A', '#D6C6A0'];
+  return (
+    <div style={{ display: 'flex', marginTop: 8 }}>
+      {['JL','MP','AK','RS','TW'].map((c,i) => (
+        <div key={c} style={{
+          width: 36, height: 36, borderRadius: 999,
+          background: colors[i], color: '#0F1A2E',
+          display: 'grid', placeItems: 'center',
+          fontSize: 12, fontWeight: 700,
+          marginLeft: i === 0 ? 0 : -10,
+          border: '2px solid #131E36',
+        }}>{c}</div>
+      ))}
+      <div style={{
+        width: 36, height: 36, borderRadius: 999,
+        background: '#ffffff10', color: '#F4EFE4',
+        display: 'grid', placeItems: 'center',
+        fontSize: 11, fontWeight: 600, marginLeft: -10,
+        border: '2px solid #131E36',
+      }}>+42</div>
+    </div>
+  );
+}
+
+function IntegrationsMini() {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+      {['HS','SF','NO','SL','GM','ZR','IN','+'].map((i, idx) => (
+        <div key={idx} style={{
+          aspectRatio: '1', borderRadius: 10,
+          background: i === '+' ? 'transparent' : '#ffffff10',
+          border: '1px solid #ffffff1a',
+          display: 'grid', placeItems: 'center',
+          fontSize: 11, fontWeight: 700, color: '#F4EFE4',
+        }}>{i}</div>
+      ))}
+    </div>
+  );
+}
+
+// COMPARISON ───────────────────────────────────────────
+function Comparison() {
+  const rows = [
+    ['Cost per year', '$180 reprinting', 'Free — Pro $5/mo'],
+    ['Update details', 'Reprint everything', 'Instant, anywhere'],
+    ['Carbon footprint', '7 trees / year', '0 trees'],
+    ['Analytics', 'None', 'Every scan tracked'],
+    ['Delivery', 'Wait 5–7 days', 'Live in 1 minute'],
+    ['Save to phone', 'Manual typing', '1 tap'],
+  ];
+  return (
+    <section style={{ padding: '120px 40px' }}>
+      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+        <Eyebrow>Paper vs. digital</Eyebrow>
+        <h2 style={{
+          fontFamily: "'Instrument Serif', Georgia, serif",
+          fontSize: 54, margin: '16px 0 60px', letterSpacing: -1, fontWeight: 400, color: '#0F1A2E',
+          maxWidth: 720, lineHeight: 1.05,
+        }}>
+          The case against <span style={{ fontStyle: 'italic', color: '#9B8449' }}>paper</span>.
+        </h2>
+        <div style={{
+          borderRadius: 20, overflow: 'hidden',
+          border: '1px solid #0F1A2E10',
+          background: '#fff',
+        }}>
+          <div style={{
+            display: 'grid', gridTemplateColumns: '1.1fr 1fr 1fr',
+            padding: '18px 24px', background: '#FAF7F2',
+            borderBottom: '1px solid #0F1A2E10',
+            fontSize: 12, letterSpacing: 1.5, textTransform: 'uppercase', color: '#4A5464',
+          }}>
+            <div />
+            <div>Paper card</div>
+            <div style={{ color: '#9B8449' }}>Kardex</div>
+          </div>
+          {rows.map((r, i) => (
+            <div key={i} style={{
+              display: 'grid', gridTemplateColumns: '1.1fr 1fr 1fr',
+              padding: '20px 24px',
+              borderBottom: i < rows.length - 1 ? '1px solid #0F1A2E0A' : 'none',
+              fontSize: 15,
+            }}>
+              <div style={{ color: '#0F1A2E', fontWeight: 600 }}>{r[0]}</div>
+              <div style={{ color: '#4A5464', textDecoration: 'line-through' }}>{r[1]}</div>
+              <div style={{ color: '#0F1A2E', fontWeight: 500 }}>
+                <span style={{ color: '#C9A24A', marginRight: 8 }}>✓</span>{r[2]}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// USE CASES ────────────────────────────────────────────
+function UseCases() {
+  const cases = [
+    { t: 'Founders', d: 'Make every coffee meeting count. Tap to share your pitch deck, calendar and cap table in one.', pill: '12K users' },
+    { t: 'Sales teams', d: 'Track every lead from handshake to CRM. Sync contacts to HubSpot or Salesforce automatically.', pill: '4.8K teams' },
+    { t: 'Realtors', d: 'Let clients book viewings straight from your card. Share listings, tours and reviews.', pill: '9.2K users' },
+    { t: 'Creators', d: 'Replace the link-in-bio. Put your whole world — videos, shop, socials — on a tappable card.', pill: '22K users' },
+  ];
+  return (
+    <section style={{ padding: '120px 40px', background: '#FAF7F2' }}>
+      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+        <Eyebrow>Use cases</Eyebrow>
+        <h2 style={{
+          fontFamily: "'Instrument Serif', Georgia, serif",
+          fontSize: 54, margin: '16px 0 60px', letterSpacing: -1, fontWeight: 400, color: '#0F1A2E',
+          maxWidth: 720, lineHeight: 1.05,
+        }}>
+          Built for <span style={{ fontStyle: 'italic', color: '#9B8449' }}>everyone</span> who shakes hands.
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
+          {cases.map(c => (
+            <div key={c.t} style={{
+              padding: 28, borderRadius: 20,
+              background: '#fff', border: '1px solid #0F1A2E10',
+              display: 'flex', flexDirection: 'column', gap: 14, minHeight: 240,
+            }}>
+              <div style={{
+                fontSize: 11, color: '#9B8449', letterSpacing: 1.5, textTransform: 'uppercase', fontWeight: 600,
+              }}>{c.pill}</div>
+              <div style={{ fontFamily: "'Instrument Serif', Georgia, serif", fontSize: 28, color: '#0F1A2E', letterSpacing: -0.3 }}>
+                {c.t}
+              </div>
+              <div style={{ fontSize: 14, color: '#4A5464', lineHeight: 1.5 }}>{c.d}</div>
+              <a href="#" style={{ marginTop: 'auto', color: '#9B8449', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
+                See example →
+              </a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// TESTIMONIALS ─────────────────────────────────────────
+function Testimonials() {
+  const quotes = [
+    { q: 'I gave out 40 cards at a conference and had 38 contacts synced to my CRM by the time I got to the airport.', n: 'Maren Kowalski', r: 'Head of Partnerships, Halcyon', i: 'MK', c: '#C9A24A' },
+    { q: 'My team of 120 rolled out Kardex in an afternoon. Two weeks later we\'d tracked 3x more lead follow-ups.', n: 'Devon Park', r: 'RevOps Lead, Meridian', i: 'DP', c: '#3FD27E' },
+    { q: 'Cheaper than my old paper cards, looks ten times better, and I can change my title without a reprint.', n: 'Aisha Romero', r: 'Independent Architect', i: 'AR', c: '#6AA0F0' },
+  ];
+  return (
+    <section style={{ padding: '120px 40px' }}>
+      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+        <Eyebrow>Reviews</Eyebrow>
+        <h2 style={{
+          fontFamily: "'Instrument Serif', Georgia, serif",
+          fontSize: 54, margin: '16px 0 60px', letterSpacing: -1, fontWeight: 400, color: '#0F1A2E',
+          maxWidth: 720, lineHeight: 1.05,
+        }}>
+          <span style={{ fontStyle: 'italic', color: '#9B8449' }}>4.9</span> / 5 from 2,400+ reviews.
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20 }}>
+          {quotes.map(q => (
+            <div key={q.n} style={{
+              padding: 28, borderRadius: 20,
+              background: '#fff', border: '1px solid #0F1A2E10',
+              display: 'flex', flexDirection: 'column', gap: 20,
+            }}>
+              <div style={{ color: '#C9A24A', fontSize: 16, letterSpacing: 2 }}>★★★★★</div>
+              <div style={{
+                fontFamily: "'Instrument Serif', Georgia, serif",
+                fontSize: 22, color: '#0F1A2E', letterSpacing: -0.3, lineHeight: 1.3,
+              }}>"{q.q}"</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 'auto' }}>
+                <div style={{
+                  width: 40, height: 40, borderRadius: 999,
+                  background: q.c, color: '#0F1A2E', display: 'grid', placeItems: 'center',
+                  fontSize: 13, fontWeight: 700,
+                }}>{q.i}</div>
+                <div>
+                  <div style={{ fontSize: 14, color: '#0F1A2E', fontWeight: 600 }}>{q.n}</div>
+                  <div style={{ fontSize: 12, color: '#4A5464' }}>{q.r}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// PRICING ──────────────────────────────────────────────
+function Pricing() {
+  const tiers = [
+    {
+      name: 'Free', price: '$0', per: 'forever',
+      d: 'Everything you need to make your first card.',
+      f: ['1 digital card', 'QR & link sharing', 'Basic analytics', 'Apple & Google Wallet'],
+      cta: 'Start free',
+    },
+    {
+      name: 'Pro', price: '$5', per: 'per month',
+      d: 'For individuals who network seriously.',
+      f: ['Everything in Free', 'Unlimited cards & themes', 'Real-time analytics', 'Custom domain', 'HubSpot / Salesforce sync', 'NFC card included'],
+      cta: 'Start 14-day trial',
+      featured: true,
+    },
+    {
+      name: 'Team', price: '$8', per: 'per user / month',
+      d: 'Roll out branded cards for the whole company.',
+      f: ['Everything in Pro', 'Team directory & branding', 'SSO & SCIM', 'Bulk NFC cards (20% off)', 'Dedicated success manager'],
+      cta: 'Talk to sales',
+    },
+  ];
+  return (
+    <section id="pricing" style={{ padding: '120px 40px', background: '#FAF7F2' }}>
+      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 60 }}>
+          <Eyebrow>Pricing</Eyebrow>
+          <h2 style={{
+            fontFamily: "'Instrument Serif', Georgia, serif",
+            fontSize: 54, margin: '16px 0 12px', letterSpacing: -1, fontWeight: 400, color: '#0F1A2E',
+          }}>
+            Simple, <span style={{ fontStyle: 'italic', color: '#9B8449' }}>honest</span> pricing.
+          </h2>
+          <div style={{ fontSize: 16, color: '#4A5464' }}>Start free. Upgrade only if you love it.</div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20, alignItems: 'stretch' }}>
+          {tiers.map(t => (
+            <div key={t.name} style={{
+              padding: 32, borderRadius: 24,
+              background: t.featured ? '#0F1A2E' : '#fff',
+              color: t.featured ? '#F4EFE4' : '#0F1A2E',
+              border: t.featured ? '1px solid #C9A24A' : '1px solid #0F1A2E10',
+              position: 'relative', transform: t.featured ? 'translateY(-8px)' : 'none',
+              boxShadow: t.featured ? '0 30px 60px -30px #0F1A2E66' : 'none',
+              display: 'flex', flexDirection: 'column', gap: 20,
+            }}>
+              {t.featured && (
+                <div style={{
+                  position: 'absolute', top: -12, right: 24,
+                  background: '#C9A24A', color: '#0F1A2E',
+                  fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', fontWeight: 700,
+                  padding: '6px 12px', borderRadius: 999,
+                }}>Most popular</div>
+              )}
+              <div>
+                <div style={{ fontFamily: "'Instrument Serif', Georgia, serif", fontSize: 28, letterSpacing: -0.3 }}>{t.name}</div>
+                <div style={{ fontSize: 14, color: t.featured ? '#9AA3B2' : '#4A5464', marginTop: 6 }}>{t.d}</div>
+              </div>
+              <div>
+                <span style={{ fontFamily: "'Instrument Serif', Georgia, serif", fontSize: 56, letterSpacing: -1 }}>{t.price}</span>
+                <span style={{ fontSize: 13, color: t.featured ? '#9AA3B2' : '#4A5464', marginLeft: 6 }}>{t.per}</span>
+              </div>
+              <Button primary={t.featured} dark={t.featured}>{t.cta} →</Button>
+              <div style={{ height: 1, background: t.featured ? '#ffffff1a' : '#0F1A2E10' }} />
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {t.f.map(f => (
+                  <li key={f} style={{ fontSize: 14, display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                    <span style={{ color: '#C9A24A' }}>✓</span>
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// FINAL CTA ────────────────────────────────────────────
+function FinalCTA({ form }) {
+  return (
+    <section style={{
+      padding: '120px 40px', background: '#0F1A2E', color: '#F4EFE4',
+      position: 'relative', overflow: 'hidden',
+    }}>
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'radial-gradient(600px 300px at 50% 100%, #C9A24A33, transparent 70%)',
+      }} />
+      <div style={{
+        maxWidth: 800, margin: '0 auto', position: 'relative', textAlign: 'center',
+      }}>
+        <Eyebrow light>Ready?</Eyebrow>
+        <h2 style={{
+          fontFamily: "'Instrument Serif', Georgia, serif",
+          fontSize: 72, margin: '20px 0 24px', letterSpacing: -1.5, fontWeight: 400, lineHeight: 1.02,
+        }}>
+          Your card is <span style={{ fontStyle: 'italic', color: '#C9A24A' }}>waiting</span>.
+        </h2>
+        <p style={{ fontSize: 18, color: '#9AA3B2', maxWidth: 520, margin: '0 auto 36px', lineHeight: 1.5 }}>
+          Finish what you started. Claim the card {form.name ? `for ${form.name}` : 'you just built'} — free forever.
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 14 }}>
+          <Button primary>Claim my card →</Button>
+          <Button dark>See live examples</Button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// FOOTER ───────────────────────────────────────────────
+function Footer() {
+  const cols = [
+    { h: 'Product', l: ['Features', 'Pricing', 'Analytics', 'NFC cards', 'Integrations'] },
+    { h: 'Company', l: ['About', 'Directory', 'Press', 'Careers', 'Contact'] },
+    { h: 'Resources', l: ['Help Center', 'Blog', 'Brand kit', 'API docs', 'Security'] },
+    { h: 'Legal', l: ['Privacy', 'Terms', 'Cookies', 'Refund policy'] },
+  ];
+  return (
+    <footer style={{ background: '#0B1424', color: '#9AA3B2', padding: '60px 40px 40px' }}>
+      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr repeat(4, 1fr)', gap: 40 }}>
+          <div>
+            <div style={{
+              fontFamily: "'Instrument Serif', Georgia, serif", fontSize: 28, color: '#F4EFE4', letterSpacing: -0.5,
+            }}>Kardex<span style={{ color: '#C9A24A' }}>.</span></div>
+            <div style={{ fontSize: 13, marginTop: 12, maxWidth: 280, lineHeight: 1.5 }}>
+              The quiet, powerful digital business card. Built by a small team in Lisbon.
+            </div>
+          </div>
+          {cols.map(c => (
+            <div key={c.h}>
+              <div style={{ color: '#F4EFE4', fontSize: 13, fontWeight: 600, marginBottom: 14 }}>{c.h}</div>
+              {c.l.map(l => (
+                <div key={l} style={{ fontSize: 13, marginBottom: 8 }}>
+                  <a href="#" style={{ color: '#9AA3B2', textDecoration: 'none' }}>{l}</a>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div style={{ height: 1, background: '#ffffff0f', margin: '40px 0 20px' }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+          <div>© 2026 Kardex, Lda. All rights reserved.</div>
+          <div>Made with care · kardex.cards</div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+Object.assign(window, {
+  Nav, Hero, LogoBar, HowItWorks, Features, Comparison, UseCases,
+  Testimonials, Pricing, FinalCTA, Footer,
+});
+
+</script>
+
+<script type="text/babel">
+  const { useState, useEffect } = React;
+
+  function mount() {
+    if (!window.Nav || !window.Card) { return setTimeout(mount, 30); }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  }
+
+  function App() {
+    const [form, setForm] = useState({ name: '', title: '', company: '' });
+    const [cardStyle, setCardStyle] = useState(window.TWEAK_DEFAULTS?.cardStyle || 'classic');
+
+    // Tweaks protocol — listener FIRST, then announce
+    useEffect(() => {
+      const panel = document.getElementById('tweaks');
+      function onMsg(e) {
+        if (!e.data) return;
+        if (e.data.type === '__activate_edit_mode') panel.classList.add('visible');
+        if (e.data.type === '__deactivate_edit_mode') panel.classList.remove('visible');
+      }
+      window.addEventListener('message', onMsg);
+      window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+
+      // Wire up style buttons
+      const row = document.getElementById('styleRow');
+      function update() {
+        row.querySelectorAll('button').forEach(b => {
+          b.classList.toggle('active', b.dataset.style === cardStyle);
+        });
+      }
+      update();
+      row.onclick = (e) => {
+        const b = e.target.closest('button');
+        if (!b) return;
+        setCardStyle(b.dataset.style);
+        window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { cardStyle: b.dataset.style } }, '*');
+      };
+
+      return () => window.removeEventListener('message', onMsg);
+    }, [cardStyle]);
+
+    return (
+      <div>
+        <Nav />
+        <Hero form={form} setForm={setForm} cardStyle={cardStyle} setCardStyle={setCardStyle} />
+        <LogoBar />
+        <HowItWorks />
+        <Features />
+        <Comparison />
+        <UseCases />
+        <Testimonials />
+        <Pricing />
+        <FinalCTA form={form} />
+        <Footer />
+      </div>
+    );
+  }
+
+  mount();
+</script>
 </body>
 </html>

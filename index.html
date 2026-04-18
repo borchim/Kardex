@@ -445,7 +445,7 @@ function Hero({ form, setForm, cardStyle, setCardStyle }) {
               <Field label="Company" value={form.company} onChange={v => setForm({ ...form, company: v })} placeholder="Analytical Engines, Inc." />
             </div>
             <div style={{ display: 'flex', gap: 10, marginTop: 18, alignItems: 'center' }}>
-              <Button primary>Claim this card <span>→</span></Button>
+              <Button primary onClick={() => window.location.href='/login'}>Claim this card <span>→</span></Button>
               <span style={{ fontSize: 13, color: '#4A5464' }}>Free forever · No credit card</span>
             </div>
           </div>
@@ -983,7 +983,7 @@ function FinalCTA({ form }) {
           Finish what you started. Claim the card {form.name ? `for ${form.name}` : 'you just built'} — free forever.
         </p>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 14 }}>
-          <Button primary>Claim my card →</Button>
+          <Button primary onClick={() => window.location.href='/login'}>Claim my card →</Button>
           <Button dark>See live examples</Button>
         </div>
       </div>

@@ -1,13 +1,3 @@
-/**
- * Turkish Real Estate Landing Page Template
- * Target: Emlak danışmanları in Turkey (Istanbul focus)
- * Key differentiator: Multilingual profiles for Arab, Russian & European buyers
- * Payment: iyzipay (TRY)
- *
- * Usage: Load this template from the Landing Page Settings → General → Load Template
- * Do NOT modify default-sections.ts — this file is the Turkey-specific variant.
- */
-
 export const turkishRealEstateSections = {
   sections: [
     {
@@ -165,7 +155,7 @@ export const turkishRealEstateSections = {
       title: 'Kardex Hakkında',
       description:
         "Türkiye'deki emlak danışmanlarının uluslararası alıcılara daha kolay ulaşmasını sağlamak için geliştirdik.",
-      story_title: "Türk Emlak Piyasasını Dijitalleştiriyoruz",
+      story_title: 'Türk Emlak Piyasasını Dijitalleştiriyoruz',
       story_content:
         "Kağıt kartvizit dağıtmanın modası geçti. Arap, Rus ve Avrupalı alıcılar Türkiye'de mülk ararken profesyonel, dijital ve çok dilli bir deneyim bekliyor. Kardex bu boşluğu kapatmak için doğdu.",
       image: '',
@@ -180,17 +170,17 @@ export const turkishRealEstateSections = {
     {
       key: 'team',
       title: 'Ekibimizle Tanışın',
-      subtitle: "Türk gayrimenkul piyasasını ve dijital teknolojiyi birleştiren bir ekip.",
-      cta_title: "Ekibimize Katılmak İster misiniz?",
-      cta_description: "Her zaman yetenekli kişileri arıyoruz.",
+      subtitle: 'Türk gayrimenkul piyasasını ve dijital teknolojiyi birleştiren bir ekip.',
+      cta_title: 'Ekibimize Katılmak İster misiniz?',
+      cta_description: 'Her zaman yetenekli kişileri arıyoruz.',
       cta_button_text: 'Açık Pozisyonlar',
       members: []
     },
     {
       key: 'testimonials',
       title: 'Türk Emlak Danışmanları Ne Diyor?',
-      subtitle: "Gerçek danışmanlardan gerçek sonuçlar.",
-      trust_title: 'Profesyoneller Kardex\'e Güveniyor',
+      subtitle: 'Gerçek danışmanlardan gerçek sonuçlar.',
+      trust_title: "Profesyoneller Kardex'e Güveniyor",
       trust_stats: [
         { value: '4.9/5', label: 'Ortalama Puan', color: 'blue' },
         { value: '1.000+', label: 'Mutlu Danışman', color: 'green' }
@@ -217,7 +207,7 @@ export const turkishRealEstateSections = {
           role: 'Müstakil Emlak Danışmanı',
           company: 'Kadıköy',
           content:
-            "Rus müşterilerim profilimi Rusça görüyor, iletişim çok daha kolay. Dil engeli artık sorun değil.",
+            'Rus müşterilerim profilimi Rusça görüyor, iletişim çok daha kolay. Dil engeli artık sorun değil.',
           rating: 5
         }
       ]
@@ -278,7 +268,7 @@ export const turkishRealEstateSections = {
     },
     {
       key: 'newsletter',
-      title: "Türk Emlak Piyasasından Haberdar Olun",
+      title: 'Türk Emlak Piyasasından Haberdar Olun',
       subtitle: 'Haftalık piyasa güncellemeleri ve dijital pazarlama ipuçları.',
       privacy_text: 'Spam yok. İstediğiniz zaman abonelikten çıkabilirsiniz.',
       benefits: [
@@ -302,7 +292,7 @@ export const turkishRealEstateSections = {
     {
       key: 'contact',
       title: 'İletişime Geçin',
-      subtitle: "Kardex hakkında sorularınız mı var? Size yardımcı olmaktan memnuniyet duyarız.",
+      subtitle: 'Kardex hakkında sorularınız mı var? Size yardımcı olmaktan memnuniyet duyarız.',
       form_title: 'Bize Mesaj Gönderin',
       info_title: 'İletişim Bilgileri',
       info_description: 'Her sorunuzda yardıma hazırız.',
@@ -314,42 +304,21 @@ export const turkishRealEstateSections = {
         address: 'İstanbul, Türkiye'
       },
       form_fields: [
-        {
-          name: 'name',
-          label: 'Ad Soyad',
-          type: 'text',
-          required: true,
-          placeholder: 'Adınızı giriniz'
-        },
-        {
-          name: 'email',
-          label: 'E-posta Adresi',
-          type: 'email',
-          required: true,
-          placeholder: 'E-posta adresinizi giriniz'
-        },
-        {
-          name: 'message',
-          label: 'Mesajınız',
-          type: 'textarea',
-          required: true,
-          placeholder: 'Size nasıl yardımcı olabiliriz?',
-          rows: 5
-        }
+        { name: 'name', label: 'Ad Soyad', type: 'text', required: true, placeholder: 'Adınızı giriniz' },
+        { name: 'email', label: 'E-posta Adresi', type: 'email', required: true, placeholder: 'E-posta adresinizi giriniz' },
+        { name: 'message', label: 'Mesajınız', type: 'textarea', required: true, placeholder: 'Size nasıl yardımcı olabiliriz?', rows: 5 }
       ],
       form_settings: {
         submit_button_text: 'Mesaj Gönder',
-        success_message:
-          'Mesajınız için teşekkürler! En kısa sürede geri döneceğiz.',
+        success_message: 'Mesajınız için teşekkürler! En kısa sürede geri döneceğiz.',
         show_privacy_notice: true,
-        privacy_notice:
-          'Bu formu göndererek Gizlilik Politikamızı kabul etmiş olursunuz.'
+        privacy_notice: 'Bu formu göndererek Gizlilik Politikamızı kabul etmiş olursunuz.'
       }
     },
     {
       key: 'footer',
       description:
-        "Türk emlak danışmanlarını dijital geleceğe taşıyoruz. Çok dilli profiller, NFC teknolojisi ve akıllı analitik.",
+        'Türk emlak danışmanlarını dijital geleceğe taşıyoruz. Çok dilli profiller, NFC teknolojisi ve akıllı analitik.',
       newsletter_title: 'Güncel Kalın',
       newsletter_subtitle: 'Bültenimize abone olun',
       links: {
@@ -393,21 +362,9 @@ export const turkishRealEstateSections = {
   custom_css: '',
   custom_js: '',
   section_order: [
-    'header',
-    'hero',
-    'features',
-    'screenshots',
-    'why_choose_us',
-    'templates',
-    'about',
-    'team',
-    'testimonials',
-    'active_campaigns',
-    'plans',
-    'faq',
-    'newsletter',
-    'contact',
-    'footer'
+    'header', 'hero', 'features', 'screenshots', 'why_choose_us', 'templates',
+    'about', 'team', 'testimonials', 'active_campaigns', 'plans', 'faq',
+    'newsletter', 'contact', 'footer'
   ],
   section_visibility: {
     header: true,
